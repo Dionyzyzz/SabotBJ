@@ -56,6 +56,16 @@ button{font:inherit;color:inherit;touch-action:manipulation;-webkit-tap-highligh
 .shoe-bar u{position:absolute;top:-2px;bottom:-2px;left:25%;width:2px;background:var(--card-red)}
 
 .banner{border:1px dashed var(--ink-faint);color:var(--ink-dim);padding:8px 12px;border-radius:8px;font-size:13px}
+.appbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:6;display:flex;flex-direction:column;gap:2px;margin-inline:-16px;margin-top:-12px;padding:10px 16px 8px;background:linear-gradient(var(--room) 78%,rgba(23,14,12,0))}
+.appbar-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand-mini{font-family:var(--font-display);font-style:italic;font-size:22px;line-height:1}
+.brand-mini b{font-style:normal;font-weight:700;color:var(--brass-hi)}
+.appbar-actions{display:flex;gap:8px;align-items:center}
+.icon-btn{position:relative;width:36px;height:36px;border-radius:50%;border:1px solid var(--brass);background:var(--rail);color:var(--brass-hi);display:grid;place-items:center;cursor:pointer}
+.icon-btn:hover,.icon-btn[aria-pressed="true"]{background:var(--rail-hi)}
+.icon-btn .dot{position:absolute;top:1px;right:1px;width:9px;height:9px;border-radius:50%;background:var(--brass-hi);box-shadow:0 0 0 2px var(--room)}
+.rules-list{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px;color:var(--ink-dim)}
+.info-admin{border-top:1px solid var(--rail-hi);padding-top:10px}
 .statusbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:6;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-inline:-16px;padding:8px 16px;background:linear-gradient(var(--room) 72%,rgba(23,14,12,0))}
 .status{min-height:24px;font-size:15px;color:var(--ink-dim);font-variant-numeric:tabular-nums;min-width:0}
 .adv-btn{flex:none;border:1px solid var(--brass);background:var(--rail);color:var(--brass-hi);font-weight:600;font-size:13.5px;padding:7px 13px;border-radius:999px;cursor:pointer;display:inline-flex;gap:8px;align-items:center}
@@ -320,9 +330,6 @@ body.busy .dock .btn,body.busy .dock .chipbtn,body.busy .seat .btn{pointer-event
 }
 @media (max-width:600px){
   body{padding-block-start:12px}
-  .top{align-items:center}
-  .brand h1{font-size:26px}
-  .brand p{display:none}
   .meta{font-size:11px;gap:10px}
   .status{font-size:14px}
   .arc .l2{display:none}
@@ -347,15 +354,16 @@ body.busy .dock .btn,body.busy .dock .chipbtn,body.busy .seat .btn{pointer-event
 </style>
 
 <div class="wrap">
-  <header class="top">
-    <div class="brand">
-      <h1>Le <b>Sabot</b> Blackjack</h1>
-      <p>Table partagée · jusqu'à cinq joueurs contre la banque</p>
+  <header class="appbar">
+    <div class="appbar-row">
+      <span class="brand-mini">Le <b>Sabot</b></span>
+      <div class="appbar-actions">
+        <button class="icon-btn" id="infoBtn" data-act="info" aria-label="Journal, classement et règles" aria-pressed="false"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><i class="dot" id="infoDot" hidden></i></button>
+        <button class="adv-btn" id="advLaunch" data-act="advisor" aria-pressed="false">Conseils <kbd>C</kbd></button>
+      </div>
     </div>
-    <div class="meta" id="meta"></div>
+    <div class="status" id="status" aria-live="polite">Connexion à la table…</div>
   </header>
-  <div class="banner" id="banner" hidden></div>
-  <div class="statusbar"><div class="status" id="status" aria-live="polite">Connexion à la table…</div><button class="adv-btn" id="advLaunch" data-act="advisor" aria-pressed="false">Conseils <kbd>C</kbd></button></div>
 
   <section class="table" aria-label="Table de blackjack">
     <div class="dealer" id="dealer"></div>
@@ -371,36 +379,12 @@ body.busy .dock .btn,body.busy .dock .chipbtn,body.busy .seat .btn{pointer-event
     <div class="seats" id="seats"></div>
   </section>
 
-  <div class="panels">
-    <section class="panel" aria-labelledby="h-log">
-      <h2 id="h-log">Journal de la table</h2>
-      <ul class="log" id="log"></ul>
-    </section>
-    <section class="panel" aria-labelledby="h-board">
-      <h2 id="h-board">Classement</h2>
-      <div id="board"></div>
-    </section>
-  </div>
-
-  <footer class="rules">
-    <ul>
-      <li>Sabot de 6 jeux, remélangé au quart</li>
-      <li>Mise de 25 à 5 000</li>
-      <li>Doubler sur les deux premières cartes</li>
-      <li>Séparer jusqu'à 4 mains</li>
-      <li>As séparés : une carte chacun</li>
-      <li>Sans assurance</li>
-      <li>30 s par tour, sinon la main s'arrête et la place se libère</li>
-      <li>2 min sans jouer : retrait de la table</li>
-    </ul>
-    <span id="admin"></span>
-  </footer>
-
   <div class="dock"><div class="dock-inner" id="dock"><p class="dock-msg">Connexion à la table…</p></div></div>
 </div>
-<div class="adv-scrim" id="advScrim" data-act="advisor" hidden></div>
+<div class="adv-scrim" id="advScrim" data-act="closesheets" hidden></div>
 <div class="hint" id="hint" role="status" hidden></div>
 <aside class="advisor" id="advisor" aria-label="Conseiller" hidden></aside>
+<aside class="advisor" id="info" aria-label="La table" hidden></aside>
 <div class="toast" id="toast" role="status" hidden></div>
 
 <script>
@@ -1150,7 +1134,7 @@ function hintHTML(a) {
 function placeHint() {
   const el = $("hint");
   const t = state && myTurn(state, me);
-  const sheet = advOpen && window.innerWidth <= 760;
+  const sheet = (advOpen || infoOpen) && window.innerWidth <= 760;
   const tk = t ? `${state.round}:${state.turn.seat}:${state.turn.hand}:${t.h.cards.length}` : "";
   if (!t || !hintsOn || sheet || hintDismissed === tk || !document.querySelector("#dock .btn.rec")) { el.hidden = true; el.dataset.k = ""; return; }
   if (el.dataset.k !== tk) {
@@ -1186,8 +1170,26 @@ document.addEventListener("change", e => {
     render();
   }
 });
-function setAdvisor(open) { advOpen = open; try { localStorage.setItem(ADV_KEY, open ? "1" : "0"); } catch (e) {} render(); }
+function setAdvisor(open) { advOpen = open; if (open) infoOpen = false; try { localStorage.setItem(ADV_KEY, open ? "1" : "0"); } catch (e) {} render(); }
 
+let infoOpen = false, infoTab = "log", infoSeen = null, soloNote = "";
+const INFO_TABS = { log: "Journal", board: "Classement", rules: "Règles" };
+function rulesHTML() {
+  return `<ul class="rules-list"><li>Le blackjack est payé 3 pour 2.</li><li>La banque tire à 16 et reste sur tous les 17.</li>`
+    + `<li>Sabot de 6 jeux, remélangé au quart.</li><li>Mise de ${fmt(MIN)} à ${fmt(MAX)}, départ à ${fmt(START)} jetons.</li>`
+    + `<li>Doubler sur les deux premières cartes, séparer jusqu'à 4 mains. As séparés : une carte chacun.</li><li>Sans assurance ni abandon.</li>`
+    + `<li>30 s par tour, sinon la main s'arrête et la place se libère. 2 min sans jouer : retrait de la table.</li></ul>`;
+}
+function infoHTML() {
+  const body = infoTab === "board" ? boardHTML() : infoTab === "rules" ? rulesHTML()
+    : state.log.length ? `<ul class="log">${logHTML()}</ul>` : logHTML();
+  const admin = adminHTML();
+  return `<header class="adv-head"><h2>La table</h2><button class="adv-x" data-act="info" aria-label="Fermer">×</button></header>`
+    + `<div class="meta">${metaHTML()}</div>${soloNote ? `<p class="adv-note">${esc(soloNote)}</p>` : ""}`
+    + `<div class="adv-tabs" role="group" aria-label="Choisir la vue">${Object.entries(INFO_TABS).map(([k, v]) => `<button data-act="infotab" data-arg="${k}" aria-pressed="${k === infoTab}">${v}</button>`).join("")}</div>`
+    + body + (admin ? `<div class="info-admin">${admin}</div>` : "");
+}
+function setInfo(open) { infoOpen = open; if (open) advOpen = false; render(); }
 let resetArmed = false;
 function adminHTML() {
   if (!(isAdmin || mode === "local")) return "";
@@ -1209,12 +1211,13 @@ function render() {
   clearTimeout(revealT);
   if (revealEnd > renderNow) revealT = setTimeout(render, revealEnd - renderNow + 30);
   put("status", statusHTML());
-  put("meta", metaHTML());
   put("dock", dockHTML());
-  put("log", logHTML());
-  put("board", boardHTML());
-  put("admin", adminHTML());
-  $("advisor").hidden = !advOpen; $("advScrim").hidden = !advOpen;
+  $("advisor").hidden = !advOpen; $("info").hidden = !infoOpen; $("advScrim").hidden = !(advOpen || infoOpen);
+  $("infoBtn").setAttribute("aria-pressed", String(infoOpen));
+  const lastLog = state.log.length ? JSON.stringify(state.log[state.log.length - 1]) : "";
+  if (infoSeen === null || (infoOpen && infoTab === "log")) infoSeen = lastLog;
+  $("infoDot").hidden = !lastLog || lastLog === infoSeen;
+  if (infoOpen) put("info", infoHTML());
   const lb = $("advLaunch"); lb.setAttribute("aria-pressed", String(advOpen)); lb.firstChild.textContent = advOpen ? "Masquer " : "Conseils ";
   $("seats").classList.toggle("seated", seatOf(state, me) >= 0);
   if (advOpen) put("advisor", advisorHTML());
@@ -1236,6 +1239,9 @@ document.addEventListener("click", e => {
   }
   if (a === "clear") { draft = 0; render(); return; }
   if (a === "advisor") return setAdvisor(!advOpen);
+  if (a === "info") return setInfo(!infoOpen);
+  if (a === "infotab") { infoTab = arg; render(); return; }
+  if (a === "closesheets") { infoOpen = false; return setAdvisor(false); }
   if (a === "advtab") { advTabPinned = arg; render(); return; }
   if (a === "hint-x") { hintDismissed = $("hint").dataset.k; placeHint(); return; }
   if (a === "hint-why") return setAdvisor(true);
@@ -1252,7 +1258,7 @@ document.addEventListener("keydown", e => {
   if (e.target.closest && e.target.closest("input,textarea,select")) return;
   const k = e.key.toLowerCase();
   if (k === "c") { e.preventDefault(); setAdvisor(!advOpen); return; }
-  if (k === "escape" && advOpen) { setAdvisor(false); return; }
+  if (k === "escape" && (advOpen || infoOpen)) { infoOpen = false; setAdvisor(false); return; }
   if (myTurn(state, me)) {
     const map = { t: "hit", r: "stand", d: "double", s: "split" };
     const btn = map[k] && document.querySelector(`#dock [data-act="${map[k]}"]`);
@@ -1298,7 +1304,7 @@ function startLocal(note) {
   state = loadSolo();
   if (!state) { state = initState(); state.seats[2] = newSeat(me); }
   names[me] = "";
-  const b = $("banner"); b.textContent = note; b.hidden = false;
+  soloNote = note;
   render();
 }
 async function boot() {
