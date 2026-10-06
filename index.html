@@ -230,6 +230,31 @@ body.busy .dock .btn,body.busy .dock .chipbtn,body.busy .seat .btn{pointer-event
 .adv-stat b{font-family:var(--font-display);font-size:22px;font-variant-numeric:tabular-nums;line-height:1.1}
 .adv-ev{display:flex;flex-direction:column;gap:5px}
 .adv-ev h3,.adv-chart h3{margin:0 0 2px;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-dim);font-weight:600}
+.adv-sec{display:flex;flex-direction:column;gap:10px;padding-top:12px;border-top:1px solid var(--rail-hi)}
+.adv-sec h3{margin:0;font-family:var(--font-display);font-style:italic;font-weight:500;font-size:16px;color:var(--ink);text-transform:none;letter-spacing:0}
+.odds{display:flex;flex-direction:column;gap:5px}
+.odds-top,.ev2-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.odds-l,.ev2-l{font-size:14px;color:var(--ink);display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center}
+.odds-v,.ev2-v{font-family:var(--font-display);font-size:22px;line-height:1;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ev2-v small{font-family:var(--font-body);font-size:11px;font-weight:500;color:var(--ink-dim)}
+.odds-n{margin:0;font-size:12.5px;color:var(--ink-dim)}
+.good{color:var(--win)} .bad{color:var(--lose)}
+.meter{height:10px;border-radius:5px;background:rgba(0,0,0,.35);overflow:hidden}
+.meter i{display:block;height:100%;border-radius:5px;background:var(--ink-faint)}
+.meter i.good{background:var(--win)} .meter i.bad{background:var(--lose)}
+.ev2{display:flex;flex-direction:column;gap:5px;padding:8px 10px;border-radius:9px;background:rgba(0,0,0,.18)}
+.ev2.is-best{background:rgba(231,203,141,.1);box-shadow:inset 0 0 0 1px var(--brass)}
+.etag{flex:none;font-style:normal;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:1px 6px;border-radius:4px}
+.etag.best{background:var(--brass);color:var(--brass-ink)}
+.etag.chart{border:1px solid var(--ink-faint);color:var(--ink-dim)}
+.gauge{position:relative;display:flex;height:12px;border-radius:6px;overflow:visible}
+.gauge .z{opacity:.55}
+.gauge .z.bad{flex:3;background:var(--lose);border-radius:6px 0 0 6px} .gauge .z.mid{flex:3;background:var(--ink-faint)} .gauge .z.good{flex:2;background:var(--win);border-radius:0 6px 6px 0}
+.gauge i{position:absolute;top:-4px;width:4px;height:20px;margin-left:-2px;border-radius:2px;background:var(--ink);box-shadow:0 0 0 2px var(--rail)}
+.gauge-l{display:flex;justify-content:space-between;font-size:11px;color:var(--ink-dim)}
+.adv-chart{border-top:1px solid var(--rail-hi);padding-top:10px}
+.adv-chart summary{cursor:pointer;font-family:var(--font-display);font-style:italic;font-size:16px;color:var(--ink);padding:4px 0;list-style-position:inside}
+.adv-chart[open] summary{margin-bottom:6px}
 .ev-row{display:grid;grid-template-columns:62px 1fr 64px;align-items:center;gap:8px;font-variant-numeric:tabular-nums}
 .ev-row.best .ev-l{color:var(--brass-hi);font-weight:700}
 .ev-bar{position:relative;height:10px;background:rgba(0,0,0,.3);border-radius:5px}
@@ -875,7 +900,7 @@ const UPS = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 const upLabel = u => u === 11 ? "As" : String(u);
 const CODE_LETTER = { H: "T", S: "R", D: "D", Ds: "Dr", P: "S" };
 const MOVE = { hit: "Tirer", stand: "Rester", double: "Doubler", split: "Séparer" };
-const pct = (x, d = 0) => (x * 100).toLocaleString("fr-FR", { minimumFractionDigits: d, maximumFractionDigits: d }) + " %";
+const pct = (x, d = 0) => (x * 100).toLocaleString("fr-FR", { minimumFractionDigits: d, maximumFractionDigits: d }) + "\u00a0%";
 const signed = x => (x > 0 ? "+" : x < 0 ? "−" : "") + Math.abs(x * 100).toLocaleString("fr-FR", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + " %";
 
 function hardCode(t, u) {
@@ -1007,37 +1032,63 @@ function whyText(a) {
   if (a.soft) return `Une main souple ne saute pas sur la prochaine carte : l'As peut redevenir 1. Tirez pour améliorer ${t}.`;
   return `La banque montre ${U}, une carte forte : elle finit entre 17 et 21 dans ${pct(1 - a.dBust)} des cas. Rester sur ${t} perd le plus souvent. Tirer coûte moins cher, même avec ${bust} de risque de sauter.`;
 }
+/* Plain-language odds for small screens: a meter, the figure, and "x fois sur 10". */
+function outOf10(x) {
+  if (x <= 0) return "Impossible : aucune carte ne peut vous faire sauter.";
+  const n = Math.round(x * 10);
+  return n <= 0 ? "Moins d'une fois sur 10." : n >= 10 ? "Presque à chaque fois." : `Environ ${n} fois sur 10.`;
+}
+function oddsHTML(label, x, tone, note) {
+  return `<div class="odds"><div class="odds-top"><span class="odds-l">${label}</span><b class="odds-v ${tone}">${pct(x)}</b></div>`
+    + `<div class="meter"><i class="${tone}" style="width:${Math.max(1, Math.min(100, x * 100)).toFixed(1)}%"></i></div>`
+    + `<p class="odds-n">${note || outOf10(x)}</p></div>`;
+}
 function adviceHTML(p, h) {
   const a = adviceFor(p, h);
   const best = a.evs.reduce((m, x) => x.ev > m.ev ? x : m, a.evs[0]);
   const row = CHARTS[a.look.table].rows.find(r => r.key === a.look.row);
-  const scale = Math.max(...a.evs.map(x => Math.abs(x.ev)), 0.01);
   const fallback = a.fellBack ? `<p class="adv-alt">Le tableau conseille de doubler, mais ce n'est possible que sur les deux premières cartes avec assez de jetons. On ${a.move === "stand" ? "reste" : "tire"} à la place.</p>` : "";
   const mine = a.evs.find(x => x.a === a.move);
   const alt = best.a !== a.move && mine && best.ev - mine.ev > 0.004
-    ? `<p class="adv-alt">Avec les cartes qui restent dans le sabot, « ${MOVE[best.a]} » rapporte un peu plus que le tableau (${signed(best.ev - mine.ev)} de la mise).</p>` : "";
+    ? `<p class="adv-alt">Avec les cartes qui restent dans le sabot, « ${MOVE[best.a]} » rapporte un peu plus que le tableau.</p>` : "";
+  const bet = h.bet;
+  const scale = Math.max(...a.evs.map(x => Math.abs(x.ev)), 0.01);
+  const rows = a.evs.slice().sort((x, y) => y.ev - x.ev).map(x => {
+    const chips = Math.round(x.ev * bet), cls = chips > 0 ? "good" : chips < 0 ? "bad" : "";
+    const tags = (x === best ? `<em class="etag best">le plus rentable</em>` : "") + (x.a === a.move ? `<em class="etag chart">conseil du tableau</em>` : "");
+    return `<div class="ev2${x === best ? " is-best" : ""}"><div class="ev2-top"><span class="ev2-l">${MOVE[x.a]}${tags}</span>`
+      + `<b class="ev2-v ${cls}">${chips > 0 ? "+" : chips < 0 ? "−" : ""}${fmt(Math.abs(chips))} <small>jetons</small></b></div>`
+      + `<div class="meter"><i class="${cls || "flat"}" style="width:${Math.max(2, Math.abs(x.ev) / scale * 100).toFixed(1)}%"></i></div></div>`;
+  }).join("");
+  const canHit = a.tot < 21;
   return `<div class="adv-call"><span class="adv-move ${a.move}">${MOVE[a.move]}</span>`
     + `<span class="adv-cite">Tableau : <b>${CHARTS[a.look.table].label.toLowerCase()} ${row ? row.lab : a.tot}</b><br>contre <b>${upLabel(a.up)}</b> de la banque</span></div>`
     + `<p class="adv-why">${whyText(a)}</p>${fallback}${alt}`
-    + `<div class="adv-stats"><div class="adv-stat"><span>Vous sautez si vous tirez</span><b>${pct(a.bustHit)}</b></div>`
-    + `<div class="adv-stat"><span>La banque saute</span><b>${pct(a.dBust)}</b></div></div>`
-    + `<div class="adv-ev"><h3>Gain moyen de chaque choix, en % de la mise</h3>`
-    + a.evs.map(x => { const w = Math.abs(x.ev) / scale * 50;
-        return `<div class="ev-row${x === best ? " best" : ""}"><span class="ev-l">${MOVE[x.a]}</span>`
-          + `<span class="ev-bar"><i class="${x.ev >= 0 ? "pos" : "neg"}" style="width:${w.toFixed(1)}%"></i></span><span class="ev-v">${signed(x.ev)}</span></div>`; }).join("")
-    + `</div>`;
+    + `<section class="adv-sec"><h3>Vos chances sur ce coup</h3>`
+    + (canHit ? oddsHTML("Si vous tirez, vous sautez", a.bustHit, "bad") : "")
+    + oddsHTML(`La banque (${upLabel(a.up)}) saute`, a.dBust, "good", `${outOf10(a.dBust)} Si elle saute, toute main encore en jeu gagne.`)
+    + `</section><section class="adv-sec"><h3>Ce que rapporte chaque choix</h3>`
+    + `<p class="adv-note">En moyenne, pour votre mise de ${fmt(bet)}, si l'on rejouait ce coup un grand nombre de fois. <span class="good">Vert</span> : gain, <span class="bad">rouge</span> : perte.</p>`
+    + `${rows}</section>`;
 }
 function shoeHTML() {
   const U = unseen();
   let rc = 0; for (let v = 1; v <= 10; v++) rc -= U.n[v] * (v >= 2 && v <= 6 ? 1 : v === 1 || v === 10 ? -1 : 0);
   const tc = rc / (U.tot / 52);
   const tcs = (tc > 0 ? "+" : tc < 0 ? "−" : "") + Math.abs(tc).toLocaleString("fr-FR", { maximumFractionDigits: 1, minimumFractionDigits: 1 });
-  const msg = tc >= 2 ? "Le sabot est riche en 10 et en As : blackjacks et doubles gagnants sont plus fréquents. C'est le moment où les compteurs augmentent leur mise."
-    : tc <= -1 ? "Le sabot est riche en petites cartes : la banque saute moins souvent. Une mise basse limite les pertes."
-    : "Sabot neutre. En suivant le tableau à la lettre, l'avantage de la banque est d'environ 0,5 %.";
-  return `<div class="adv-stats"><div class="adv-stat"><span>Compte Hi-Lo par jeu</span><b>${tcs}</b></div>`
-    + `<div class="adv-stat"><span>10 et figures restants</span><b>${pct(U.n[10] / U.tot, 1)}</b></div></div><p class="adv-note">${msg} (Normal : 30,8 % de 10 et figures.)</p>`;
+  const [verdict, tone, msg] = tc >= 2 ? ["Favorable", "good", "Il reste beaucoup de 10 et d'As : plus de blackjacks et de doubles gagnants. C'est le moment où les compteurs misent plus."]
+    : tc <= -1 ? ["Défavorable", "bad", "Il reste beaucoup de petites cartes : la banque saute moins souvent. Une mise basse limite les pertes."]
+    : ["Neutre", "", "Ni bon ni mauvais. En suivant le tableau, la banque garde un petit avantage d'environ 0,5 %."];
+  const pos = Math.max(0, Math.min(100, (tc + 4) / 8 * 100));
+  return `<section class="adv-sec"><h3>État du sabot avant la donne</h3>`
+    + `<div class="odds-top"><span class="odds-l">Pour le joueur</span><b class="odds-v ${tone}">${verdict}</b></div>`
+    + `<div class="gauge" role="img" aria-label="Compte Hi-Lo ${tcs} par jeu : ${verdict.toLowerCase()}"><span class="z bad"></span><span class="z mid"></span><span class="z good"></span><i style="left:${pos.toFixed(1)}%"></i></div>`
+    + `<div class="gauge-l"><span>Défavorable</span><span>Neutre</span><span>Favorable</span></div>`
+    + `<p class="adv-note">${msg}</p>`
+    + `<p class="odds-n">Compte Hi-Lo : ${tcs} par jeu · 10 et figures restants : ${pct(U.n[10] / U.tot, 1)} (normal : 30,8 %).</p></section>`;
 }
+let chartOpen = null;
+document.addEventListener("toggle", e => { if (e.target && e.target.id === "advChart") chartOpen = e.target.open; }, true);
 function chartHTML(look) {
   const tab = advTabPinned || (look ? look.table : "hard");
   const c = CHARTS[tab], hl = look && look.table === tab;
@@ -1048,11 +1099,12 @@ function chartHTML(look) {
       const cls = code + (hl && u === look.up ? " col" : "") + (on && u === look.up ? " hl" : "");
       return `<td class="${cls}">${CODE_LETTER[code]}</td>`; }).join("")}</tr>`;
   }).join("");
-  return `<div class="adv-chart"><h3>Stratégie de base · colonne = carte visible de la banque</h3>`
+  const open = chartOpen != null ? chartOpen : window.innerWidth > 760;
+  return `<details class="adv-chart" id="advChart"${open ? " open" : ""}><summary>Tableau de stratégie complet</summary><p class="odds-n">Ligne : votre main · colonne : carte visible de la banque.</p>`
     + `<div class="adv-tabs" role="group" aria-label="Choisir le tableau">${Object.entries(CHARTS).map(([k, v]) => `<button data-act="advtab" data-arg="${k}" aria-pressed="${k === tab}">${v.label}</button>`).join("")}</div>`
     + `<div class="chart-wrap"><table class="chart${hl ? " has-hl" : ""}">${head}${rows}</table></div>`
     + `<div class="chart-legend"><span><i style="background:var(--c-hit)"></i>T Tirer</span><span><i style="background:var(--c-stand)"></i>R Rester</span>`
-    + `<span><i style="background:var(--c-dbl)"></i>D Doubler, sinon tirer</span><span><i style="background:var(--c-dbl)"></i>Dr Doubler, sinon rester</span><span><i style="background:var(--c-split)"></i>S Séparer</span></div></div>`;
+    + `<span><i style="background:var(--c-dbl)"></i>D Doubler, sinon tirer</span><span><i style="background:var(--c-dbl)"></i>Dr Doubler, sinon rester</span><span><i style="background:var(--c-split)"></i>S Séparer</span></div></details>`;
 }
 function advisorHTML() {
   const s = state, t = myTurn(s, me);
@@ -1065,7 +1117,7 @@ function advisorHTML() {
     top = adviceHTML(t.p, t.h);
   } else if (s.phase === "playing" && s.dealer.cards.length) {
     const up = cardVal(s.dealer.cards[0]), D = dealerDist(up === 11 ? 1 : up, unseen().p);
-    top = `<p class="adv-note">Le conseil s'affiche quand c'est à vous de jouer.</p><div class="adv-stats"><div class="adv-stat"><span>Carte de la banque</span><b>${upLabel(up)}</b></div><div class="adv-stat"><span>La banque saute</span><b>${pct(D.bust || 0)}</b></div></div>`;
+    top = `<p class="adv-note">Le conseil s'affiche quand c'est à vous de jouer.</p><section class="adv-sec"><h3>Pendant ce temps</h3>${oddsHTML(`La banque (${upLabel(up)}) saute`, D.bust || 0, "good")}</section>`;
   } else {
     top = `<p class="adv-note">Avant la donne : ce que disent les cartes restantes du sabot.</p>${shoeHTML()}`;
   }
