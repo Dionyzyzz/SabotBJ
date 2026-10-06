@@ -7,7 +7,7 @@ Table de blackjack multijoueur en temps réel : jusqu'à cinq joueurs contre la 
 ## Jouer
 
 - **Multijoueur** : la table partagée tourne comme artifact Claude (la page publiée sur claude.ai). Pour inviter des joueurs, partager l'artifact avec l'accès **Contributeur**. Avec un accès Lecteur, on regarde la partie sans s'asseoir.
-- **Solo** : `index.html` s'ouvre dans n'importe quel navigateur (ou sur GitHub Pages) et lance une partie seul contre la banque. L'état partagé n'existe que dans la version artifact.
+- **Solo (web)** : `index.html` est un site statique, à déployer sur Vercel ou à ouvrir dans n'importe quel navigateur. On joue seul contre la banque, et les jetons sont gardés dans le navigateur (localStorage). Le multijoueur n'existe que dans la version artifact.
 
 ## Règles
 
@@ -35,10 +35,22 @@ Raccourcis clavier pendant votre tour : **T** tirer, **R** rester, **D** doubler
 | --- | --- |
 | `sabot-blackjack.html` | Source de l'artifact Claude (sans `<html>`/`<head>`, ajoutés par la visionneuse). |
 | `index.html` | Page autonome, générée par `./build.sh`. Ne pas modifier à la main. |
-| `build.sh` | Régénère `index.html` à partir du source. |
+| `build.sh` | Régénère `index.html` à partir du source (titre, favicon et balises de partage dans le `<head>`). |
+| `vercel.json` | En-têtes de sécurité et URL propres pour Vercel. |
+| `.vercelignore` | N'envoie que `index.html` en ligne (pas le source ni le script). |
 
 Après une modification de `sabot-blackjack.html` :
 
 ```sh
 ./build.sh
 ```
+
+## Déployer sur Vercel
+
+Aucune étape de build : `index.html` est déjà généré et versionné.
+
+1. Sur vercel.com, **Add New → Project**, puis importer le dépôt `SabotBJ`.
+2. Framework Preset : **Other**. Laisser Build Command et Output Directory vides.
+3. **Deploy**.
+
+Chaque `git push` sur `main` redéploie le site. Pensez à lancer `./build.sh` avant de committer une modification du source.

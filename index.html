@@ -3,13 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
-</head>
-<body>
+<meta name="description" content="Blackjack contre la banque : sabot de 6 jeux, conseiller de stratégie de base et probabilités en direct.">
+<meta name="theme-color" content="#170e0c">
+<meta property="og:title" content="Le Sabot Blackjack">
+<meta property="og:description" content="Blackjack contre la banque : sabot de 6 jeux, conseiller de stratégie de base et probabilités en direct.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='10' y='6' width='40' height='54' rx='6' fill='%23fbf8f1' stroke='%23c9a45c' stroke-width='3'/%3E%3Ctext x='30' y='44' font-size='30' text-anchor='middle' font-family='Georgia,serif' fill='%23b3172b'%3E%E2%99%A5%3C/text%3E%3C/svg%3E">
 <title>Sabot Blackjack</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,500;0,6..96,700;1,6..96,500;1,6..96,700&family=Figtree:wght@400;500;600;700&display=swap">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
 <style>
 /* Layout: one felt table seen from the player's side — dealer at the top rail, printed arc, five seats along the curve, a personal control dock pinned below. Single dark visual world (casino room). */
 :root{
@@ -637,7 +643,7 @@ async function act(name, arg, opts = {}) {
       const r = A[name](s, me, Date.now(), arg);
       if (r === SKIP) return;
       if (r) { if (!opts.quiet) toast(r); return; }
-      state = s; render(); return;
+      state = s; saveSolo(); render(); return;
     }
     if (mode !== "db") return;
     let got = false;
@@ -1225,15 +1231,27 @@ setInterval(() => {
 }, 1000);
 
 /* ---------- Boot ---------- */
+/* Solo games keep their chips on this device only. */
+const SOLO_KEY = "sabot.solo";
+function loadSolo() {
+  try {
+    const s = JSON.parse(localStorage.getItem(SOLO_KEY) || "null");
+    if (s && s.v === 1 && Array.isArray(s.seats) && s.seats.length === SEATS && typeof s.shoe === "string") return s;
+  } catch (e) {}
+  return null;
+}
+function saveSolo() { try { localStorage.setItem(SOLO_KEY, JSON.stringify(state)); } catch (e) {} }
 function startLocal(note) {
-  mode = "local"; me = "solo"; state = initState();
-  state.seats[2] = newSeat(me); names[me] = "";
+  mode = "local"; me = "solo";
+  state = loadSolo();
+  if (!state) { state = initState(); state.seats[2] = newSeat(me); }
+  names[me] = "";
   const b = $("banner"); b.textContent = note; b.hidden = false;
   render();
 }
 async function boot() {
   const C = window.claude;
-  if (!C || typeof C.use !== "function") return startLocal("Partie solo : la table partagée n'est disponible que dans la page publiée sur Claude.");
+  if (!C || typeof C.use !== "function") return startLocal("Partie solo contre la banque. Vos jetons sont gardés sur cet appareil.");
   let dbc = null, uc = null;
   try { [dbc, uc] = await Promise.all([C.use("db"), C.use("user")]); } catch (e) { /* fall through */ }
   if (!dbc) return startLocal("Partie solo : la table partagée n'est pas accessible depuis cette vue (connexion requise).");

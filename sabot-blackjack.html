@@ -629,7 +629,7 @@ async function act(name, arg, opts = {}) {
       const r = A[name](s, me, Date.now(), arg);
       if (r === SKIP) return;
       if (r) { if (!opts.quiet) toast(r); return; }
-      state = s; render(); return;
+      state = s; saveSolo(); render(); return;
     }
     if (mode !== "db") return;
     let got = false;
@@ -1217,15 +1217,27 @@ setInterval(() => {
 }, 1000);
 
 /* ---------- Boot ---------- */
+/* Solo games keep their chips on this device only. */
+const SOLO_KEY = "sabot.solo";
+function loadSolo() {
+  try {
+    const s = JSON.parse(localStorage.getItem(SOLO_KEY) || "null");
+    if (s && s.v === 1 && Array.isArray(s.seats) && s.seats.length === SEATS && typeof s.shoe === "string") return s;
+  } catch (e) {}
+  return null;
+}
+function saveSolo() { try { localStorage.setItem(SOLO_KEY, JSON.stringify(state)); } catch (e) {} }
 function startLocal(note) {
-  mode = "local"; me = "solo"; state = initState();
-  state.seats[2] = newSeat(me); names[me] = "";
+  mode = "local"; me = "solo";
+  state = loadSolo();
+  if (!state) { state = initState(); state.seats[2] = newSeat(me); }
+  names[me] = "";
   const b = $("banner"); b.textContent = note; b.hidden = false;
   render();
 }
 async function boot() {
   const C = window.claude;
-  if (!C || typeof C.use !== "function") return startLocal("Partie solo : la table partagée n'est disponible que dans la page publiée sur Claude.");
+  if (!C || typeof C.use !== "function") return startLocal("Partie solo contre la banque. Vos jetons sont gardés sur cet appareil.");
   let dbc = null, uc = null;
   try { [dbc, uc] = await Promise.all([C.use("db"), C.use("user")]); } catch (e) { /* fall through */ }
   if (!dbc) return startLocal("Partie solo : la table partagée n'est pas accessible depuis cette vue (connexion requise).");
