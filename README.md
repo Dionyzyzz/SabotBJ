@@ -25,9 +25,11 @@ Table de blackjack multijoueur en temps réel : jusqu'à cinq joueurs contre la 
 - **Bulle « meilleur coup »** à chaque tour, calée au-dessus des boutons et pointée vers le coup conseillé.
 - **Absents** : 30 s pour jouer son tour (sinon la main s'arrête et la place se libère après la donne), retrait de la table après 2 min sans action, bouton « Je reste ».
 - **Mobile** : grands boutons en 2×2, conseiller en panneau coulissant, barre d'état fixe.
+- **Effets** : ampoules de casino qui clignotent sur le rebord du tapis, projecteur sur la main jouée, faisceaux de lumière, confettis et jetons qui volent, secousses et zooms de caméra, gros textes animés (« BLACKJACK ! », « SAUTÉ ! », « LA BANQUE SAUTE ! », « 21 ! »), compteur de jetons qui défile, série de victoires, sons générés à la volée (Web Audio, aucun fichier) et vibrations sur téléphone. Les effets suivent l'état partagé : chaque joueur voit aussi les moments des autres.
+- **Réglages** (☰ → Réglages) : son, vibrations et effets visuels, gardés sur l'appareil. Les animations sont réduites si le système le demande.
 - Journal de la table et classement des gains.
 
-Raccourcis clavier pendant votre tour : **T** tirer, **R** rester, **D** doubler, **S** séparer. **C** ouvre les conseils, **Entrée** valide la mise.
+Raccourcis clavier pendant votre tour : **T** tirer, **R** rester, **D** doubler, **S** séparer. **C** ouvre les conseils, **M** coupe ou remet le son, **Entrée** valide la mise.
 
 ## Fichiers
 
