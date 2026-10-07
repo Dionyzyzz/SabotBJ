@@ -355,7 +355,8 @@ body.busy .dock .btn,body.busy .dock .chipbtn,body.busy .seat .btn{pointer-event
 }
 
 /* ---------- Juice: lights, camera, overlays ---------- */
-html{overflow-x:hidden}
+html{overflow-x:hidden;overflow-x:clip}
+body{overflow-x:clip;touch-action:pan-y pinch-zoom}
 .cam,.cam-zoom{position:relative;will-change:transform}
 .table>.dealer,.table>.arc,.table>.seats{position:relative;z-index:1}
 .lights{position:absolute;inset:0;border-radius:inherit;overflow:hidden;pointer-events:none;z-index:0;isolation:isolate;-webkit-mask-image:-webkit-radial-gradient(white,black)}
@@ -1742,8 +1743,9 @@ function shake(power = .5, ms = 500) {
   }
   $("cam").animate(fr, { duration: ms, easing: "linear" });
 }
+const phoneUI = () => window.matchMedia("(max-width: 760px), (pointer: coarse)").matches;   // no camera zoom on phones
 function zoomPunch(target, amt = 1.04, ms = 600) {
-  if (!motionOn() || !target) return;
+  if (!motionOn() || !target || phoneUI()) return;
   const z = $("camZoom");
   if (zoomAnim) zoomAnim.cancel();
   const r = z.getBoundingClientRect(), t = target.getBoundingClientRect(), sc = r.width / z.offsetWidth || 1;
@@ -2402,7 +2404,7 @@ function updateFocus() {
   const r = f.getBoundingClientRect(), sc = r.width / f.offsetWidth || 1, h = target.getBoundingClientRect();
   f.style.transformOrigin = `${Math.round((h.left + h.width / 2 - r.left) / sc)}px ${Math.round((h.top + h.height / 2 - r.top) / sc)}px`;
   f.style.setProperty("--fz", z);
-  f.classList.add("focus"); document.body.classList.add("focus");
+  f.classList.toggle("focus", !phoneUI()); document.body.classList.add("focus");
   const v = $("vignette");
   v.style.setProperty("--vx", ((h.left + h.width / 2) / window.innerWidth * 100).toFixed(1) + "%");
   v.style.setProperty("--vy", ((h.top + h.height / 2) / window.innerHeight * 100).toFixed(1) + "%");
