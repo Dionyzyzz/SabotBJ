@@ -599,33 +599,27 @@ body.no-fx .track{display:none}
 @media (min-width:761px){ .knife{width:min(62vw,880px)} }
 body.no-fx .knife{display:none}
 
-/* ---------- Win animation: ACE banner (Valorant-style), with the four aces ---------- */
-.ace{position:fixed;inset:0;z-index:27;pointer-events:none;display:none;--v-red:#ff4655;--v-cream:#ece8e1;--v-navy:#0f1923;--v-gold:#f5c96a}
+/* ---------- Win animation: ACE, after Valorant's kill banner (ring emblem, kill arc, HUD lines), with the four aces ---------- */
+.ace{position:fixed;inset:0;z-index:27;pointer-events:none;display:none;--teal:#5ef2c2;--line:rgba(222,230,234,.85);--v-red:#ff4655}
 .ace.on{display:block}
-.ace-band{position:absolute;left:0;right:0;top:46%;height:clamp(230px,40vh,330px);transform:translateY(-50%);
-  background:linear-gradient(90deg,transparent,rgba(15,25,35,.72) 18%,rgba(15,25,35,.86) 50%,rgba(15,25,35,.72) 82%,transparent);
-  box-shadow:inset 0 2px 0 rgba(255,70,85,.55),inset 0 -2px 0 rgba(255,70,85,.55)}
-.ace-stage{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;width:min(92vw,520px)}
-.ace-cards{position:relative;width:100%;height:clamp(70px,13vh,96px)}
-.ace-card{--w:clamp(42px,11vw,56px);position:absolute;left:50%;bottom:-6px;width:var(--w);margin-left:calc(var(--w) / -2);aspect-ratio:5/7;border-radius:6px;background:var(--card);color:var(--card-black);
-  box-shadow:0 0 0 1px var(--card-edge),0 8px 16px rgba(0,0,0,.5);transform-origin:50% 100%;font-family:var(--font-display);opacity:0}
-.ace-card.red{color:var(--card-red)}
-.ace-card .ci{position:absolute;left:8%;top:5%;display:flex;flex-direction:column;align-items:center;line-height:.9;font-weight:700;font-size:calc(var(--w) * .3)}
-.ace-card .ci i{font-style:normal;font-size:.8em}
-.ace-card b{position:absolute;inset:0;display:grid;place-items:center;font-size:calc(var(--w) * .58);line-height:1}
-.ace-emblem{position:relative;width:clamp(96px,22vw,128px);aspect-ratio:1;margin-top:-18px;opacity:0;filter:drop-shadow(0 0 18px rgba(255,70,85,.55))}
-.ace-emblem svg{width:100%;height:100%;display:block}
-.ace-emblem b{position:absolute;inset:0;display:grid;place-items:center;font:400 clamp(44px,10vw,60px)/1 "Bebas Neue","Arial Narrow",sans-serif;color:var(--v-cream);padding-top:6%;text-shadow:0 2px 0 rgba(0,0,0,.35)}
-.ace-ring{position:absolute;left:50%;top:calc(clamp(70px,13vh,96px) + clamp(30px,8vw,46px));width:clamp(96px,22vw,128px);aspect-ratio:1;border-radius:50%;border:3px solid var(--v-gold);opacity:0;transform:translate(-50%,-50%)}
-.ace-pips{display:flex;gap:8px;margin-top:10px}
-.ace-pip{width:18px;height:12px;background:rgba(236,232,225,.22);clip-path:polygon(0 0,50% 55%,100% 0,100% 45%,50% 100%,0 45%);transition:background .15s}
-.ace-pip.lit{background:var(--v-red);filter:drop-shadow(0 0 6px var(--v-red));animation:pipin .28s cubic-bezier(.3,1.6,.5,1)}
-.ace-pip.lit:last-child{background:var(--v-gold);filter:drop-shadow(0 0 8px var(--v-gold))}
-@keyframes pipin{from{transform:scale(2)}}
-.ace-word{position:relative;overflow:hidden;margin-top:2px;padding:0 .12em;font:400 clamp(72px,20vw,148px)/.9 "Bebas Neue","Arial Narrow",Impact,sans-serif;color:var(--v-cream);letter-spacing:.06em;opacity:0;
-  text-shadow:4px 0 0 var(--v-red),0 0 30px rgba(255,70,85,.45)}
-.ace-slash{position:absolute;top:-10%;bottom:-10%;left:0;width:30%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.85),transparent);mix-blend-mode:screen;transform:translateX(-140%) skewX(-24deg)}
-.ace-sub{font:600 clamp(11px,2.8vw,14px)/1 var(--font-body);letter-spacing:.32em;text-transform:uppercase;color:var(--v-red);margin-top:6px;opacity:0}
+.ace-wrap{position:absolute;left:50%;bottom:var(--ace-bottom,140px);display:flex;flex-direction:column;align-items:center;transform:translateX(-50%)}
+.ace-title{position:relative;display:flex;align-items:center;justify-content:center;width:min(94vw,640px);height:clamp(54px,14vw,96px);margin-bottom:-4px}
+.ace-word{position:relative;z-index:1;font:400 clamp(56px,15vw,100px)/1 "Bebas Neue","Arial Narrow",Impact,sans-serif;color:#fff;letter-spacing:.1em;padding-left:.1em;opacity:0;
+  text-shadow:0 0 22px rgba(94,242,194,.65),0 0 2px #fff,0 3px 0 rgba(0,0,0,.35)}
+.ace-streak{position:absolute;top:50%;height:2px;width:0;background:linear-gradient(90deg,rgba(94,242,194,0),var(--teal) 70%,#fff);box-shadow:0 0 10px var(--teal)}
+.ace-streak.l{right:calc(50% + clamp(66px,16vw,108px))}
+.ace-streak.r{left:calc(50% + clamp(66px,16vw,108px));transform:scaleX(-1)}
+.ace-emb{position:relative;width:clamp(140px,34vw,180px);aspect-ratio:1;opacity:0}
+.ace-emb svg{width:100%;height:100%;display:block;overflow:visible}
+.ace-emb .hud{stroke:var(--line);stroke-width:1.5;fill:none;stroke-linecap:round;transform-box:view-box;transform-origin:50% 50%}
+.ace-emb .ring{stroke:#fff;stroke-width:7;fill:#141a20}
+.ace-emb .seg{stroke:rgba(255,255,255,.16);stroke-width:6;fill:none;stroke-linecap:round;transition:stroke .12s}
+.ace-emb .seg.lit{stroke:var(--teal);filter:drop-shadow(0 0 5px var(--teal))}
+.ace-emb .glyph{font:700 46px/1 var(--font-display);fill:#fff;text-anchor:middle;dominant-baseline:central;filter:drop-shadow(0 0 6px rgba(94,242,194,.8))}
+.ace-emb .glyph.red{fill:var(--v-red);filter:drop-shadow(0 0 6px rgba(255,70,85,.8))}
+.ace-emb .glyph.ace{font:400 58px/1 "Bebas Neue","Arial Narrow",sans-serif;fill:#fff;filter:drop-shadow(0 0 10px var(--teal))}
+.ace-wave{position:absolute;left:50%;top:50%;width:46%;aspect-ratio:1;border-radius:50%;border:3px solid var(--teal);box-shadow:0 0 18px var(--teal);opacity:0;transform:translate(-50%,-50%)}
+.ace-flash{position:absolute;left:50%;top:50%;width:70%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.95),rgba(94,242,194,.45) 40%,transparent 70%);opacity:0;transform:translate(-50%,-50%)}
 body.no-fx .ace{display:none!important}
 </style>
 
@@ -1560,6 +1554,15 @@ const sfx = (() => {
     g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(v, t + atk); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
     src.connect(f); f.connect(g); g.connect(out); src.start(t, Math.random() * .5); src.stop(t + dur + .05);
   }
+  function bell(f, at, dur, vol) {   // FM bell: a bright, metallic strike
+    const a = A(); if (!a) return;
+    const t = a.currentTime + (at || 0), car = a.createOscillator(), mod = a.createOscillator(), mg = a.createGain(), g = a.createGain();
+    car.frequency.value = f; mod.frequency.value = f * 2.76;
+    mg.gain.setValueAtTime(f * 2.4, t); mg.gain.exponentialRampToValueAtTime(f * .08, t + dur);
+    mod.connect(mg); mg.connect(car.frequency);
+    g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + .004); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+    car.connect(g); g.connect(out); car.start(t); mod.start(t); car.stop(t + dur + .05); mod.stop(t + dur + .05);
+  }
   const C5 = 523.25, UP = [1, 9 / 8, 5 / 4, 3 / 2, 5 / 3, 2, 9 / 4, 5 / 2, 3, 10 / 3];
   const chip = (at = 0) => { const p = 1 + rr(-.06, .06); tone(2900 * p, at, .07, { type: "triangle", vol: .13 }); tone(4300 * p, at + .01, .06, { vol: .07 }); noise(at, .035, { f: 6000, q: 2, vol: .1 }); };
   const win = (level = 1, lift = 1) => {
@@ -1600,16 +1603,16 @@ const sfx = (() => {
       tone(115, tA, tC - tA, { type: "sawtooth", vol: .04, to: 150 });
       tone(130, tC, .8, { type: "sawtooth", vol: .055, to: 330, atk: .04 });
     },
-    pip(k) {
-      const f = 660 * Math.pow(2, k * 3 / 12);
-      tone(f, 0, .16, { type: "square", vol: .06 }); tone(f * 1.5, .02, .22, { type: "triangle", vol: .06 });
-      tone(95, 0, .2, { vol: .32, to: 48 }); noise(0, .05, { f: 6500, q: 1.5, vol: .12 });
+    pip(k) {   // kill-banner bell, one step higher each ace
+      const f = [659.3, 784, 880, 1046.5, 1318.5][k] || 1318.5;
+      bell(f, 0, .8, .13); bell(f * 2, .01, .35, .04);
+      tone(110, 0, .22, { vol: .3, to: 52 }); noise(0, .045, { f: 7000, q: 1.4, vol: .1 });
     },
     ace() {
-      noise(0, .26, { f: 400, to: 4200, q: .7, vol: .1, atk: .2 });
-      tone(56, .22, 1, { vol: .5, to: 34 });
-      [1, 5 / 4, 3 / 2, 2, 5 / 2].forEach((r, i) => tone(330 * r, .22 + i * .02, 1.2, { type: "sawtooth", vol: .032 }));
-      noise(.22, 1.3, { f: 7000, q: .4, vol: .06, type: "highpass" });
+      noise(0, .3, { f: 500, to: 5000, q: .7, vol: .09, atk: .26 });
+      tone(58, .26, 1.1, { vol: .5, to: 34 }); noise(.26, .12, { f: 2500, q: .6, vol: .14 });
+      [659.3, 987.8, 1318.5, 1661.2].forEach((f, i) => bell(f, .26 + i * .025, 1.6, .09));
+      noise(.3, 1.4, { f: 8000, q: .4, vol: .05, type: "highpass", atk: .1 });
     },
     sad() { tone(311, 0, .34, { type: "triangle", vol: .13, to: 294 }); tone(294, .36, .34, { type: "triangle", vol: .12, to: 277 }); tone(277, .72, 1.05, { type: "triangle", vol: .12, to: 208 }); },
     heart() { tone(68, 0, .14, { vol: .32, to: 44 }); tone(64, .17, .16, { vol: .24, to: 42 }); },
@@ -2538,15 +2541,20 @@ const knife = (() => {
   };
 })();
 
-/* ACE banner: the four aces land one by one like kill pips, then the emblem and the word hit. */
+/* ACE banner, after Valorant's kill banner: a ring emblem at the bottom centre, one kill segment per ace, then ACE. */
 function aceHTML() {
-  const card = su => `<div class="ace-card${su === "H" || su === "D" ? " red" : ""}"><span class="ci">A<i>${GLYPH[su]}</i></span><b>${GLYPH[su]}</b></div>`;
-  return `<div class="ace-band"></div><div class="ace-stage"><div class="ace-cards">${["S", "H", "D", "C"].map(card).join("")}</div>`
-    + `<div class="ace-emblem"><svg viewBox="0 0 100 100" aria-hidden="true"><defs><linearGradient id="aceG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff6b77"/><stop offset="1" stop-color="#c8202f"/></linearGradient></defs>`
-    + `<polygon points="50,3 91,26.5 91,73.5 50,97 9,73.5 9,26.5" fill="#0f1923" stroke="#f5c96a" stroke-width="4"/>`
-    + `<polygon points="50,18 78,50 50,82 22,50" fill="url(#aceG)"/></svg><b>A</b></div>`
-    + `<div class="ace-ring"></div><div class="ace-pips">${"<i class=\"ace-pip\"></i>".repeat(5)}</div>`
-    + `<div class="ace-word">ACE<span class="ace-slash"></span></div><div class="ace-sub">quatre as · main gagnée</div></div>`;
+  const P = (a, r) => [Math.cos(a * Math.PI / 180) * r, Math.sin(a * Math.PI / 180) * r];
+  const arc = (a0, a1, r) => { const [x0, y0] = P(a0, r), [x1, y1] = P(a1, r); return `M${x0.toFixed(1)},${y0.toFixed(1)}A${r},${r} 0 0 1 ${x1.toFixed(1)},${y1.toFixed(1)}`; };
+  const segs = [0, 1, 2, 3, 4].map(k => { const a = -126 + k * 15; return `<path class="seg" d="${arc(a, a + 12, 58)}"/>`; }).join("");
+  const outer = [[20, 70], [110, 160], [200, 250], [290, 340]].map(([a, b]) => `<path d="${arc(a, b, 79)}"/>`).join("");
+  const diag = [45, 135, 225, 315].map(a => { const [x0, y0] = P(a, 86), [x1, y1] = P(a, 97); return `<path d="M${x0.toFixed(1)},${y0.toFixed(1)}L${x1.toFixed(1)},${y1.toFixed(1)}"/>`; }).join("");
+  const chev = sd => `<path d="M${sd * 60},-6L${sd * 66},0L${sd * 60},6M${sd * 66},-6L${sd * 72},0L${sd * 66},6M${sd * 78},0H${sd * 98}"/>`;
+  const svg = `<svg viewBox="-100 -100 200 200" aria-hidden="true">`
+    + `<g class="hud">${outer}${diag}<path d="M0,-99V-84M-6,-91H6"/>${chev(-1)}${chev(1)}`
+    + `<path d="M0,53V61M0,61L5,67L0,73L-5,67ZM0,69L5,75L0,81L-5,75ZM-3,86V98M3,86V98"/></g>`
+    + `${segs}<circle class="ring" r="46"/><text class="glyph" x="0" y="2">♠</text></svg>`;
+  return `<div class="ace-wrap"><div class="ace-title"><span class="ace-streak l"></span><div class="ace-word">ACE</div><span class="ace-streak r"></span></div>`
+    + `<div class="ace-emb">${svg}<div class="ace-flash"></div><div class="ace-wave"></div></div></div>`;
 }
 let aceBusy = false;
 function aceBanner() {
@@ -2554,38 +2562,39 @@ function aceBanner() {
   if (aceBusy || !motionOn()) return;
   aceBusy = true;
   el.innerHTML = aceHTML(); el.classList.add("on");
-  const q = sel => el.querySelector(sel), cards = el.querySelectorAll(".ace-card"), pips = el.querySelectorAll(".ace-pip");
-  const fill = { fill: "both" };
-  q(".ace-band").animate([{ opacity: 0, transform: "translateY(-50%) scaleY(.15)" }, { opacity: 1, transform: "translateY(-50%) scaleY(1)" }], { duration: 260, easing: "cubic-bezier(.2,.8,.2,1)", ...fill });
-  const fan = [[-1.5, -20], [-.5, -7], [.5, 7], [1.5, 20]], step = 280;
-  cards.forEach((c, k) => {
-    const [px, rot] = fan[k], side = k < 2 ? -1 : 1, at = 160 + k * step, w = c.offsetWidth || 50;
-    const end = `translate(${(px * w * .78).toFixed(0)}px,${(Math.abs(px) * 8).toFixed(0)}px) rotate(${rot}deg)`;
-    c.animate([
-      { transform: `translate(${side * 380}px,70px) rotate(${side * 70}deg) scale(1.5)`, opacity: 0 },
-      { transform: `${end} scale(1.14)`, opacity: 1, offset: .72 },
-      { transform: `${end} scale(1)`, opacity: 1 },
-    ], { duration: 280, delay: at, easing: "cubic-bezier(.2,.9,.3,1)", ...fill });
-    setTimeout(() => { pips[k].classList.add("lit"); sfx.pip(k); flash("white", .22, 160); shake(.12, 160); buzz(12); }, at + 200);
-  });
-  const T = 160 + 4 * step + 100;
-  q(".ace-emblem").animate([
-    { transform: "scale(2.6) rotate(-24deg)", opacity: 0 }, { transform: "scale(.9) rotate(3deg)", opacity: 1, offset: .6 }, { transform: "scale(1) rotate(0deg)", opacity: 1 },
-  ], { duration: 420, delay: T, easing: "cubic-bezier(.2,.9,.3,1)", ...fill });
-  q(".ace-ring").animate([{ transform: "translate(-50%,-50%) scale(.4)", opacity: .95 }, { transform: "translate(-50%,-50%) scale(3.4)", opacity: 0 }], { duration: 720, delay: T + 200, easing: "cubic-bezier(.1,.7,.3,1)", ...fill });
-  q(".ace-word").animate([{ opacity: 0, letterSpacing: ".9em", transform: "scale(1.5)" }, { opacity: 1, letterSpacing: ".06em", transform: "scale(1)" }], { duration: 380, delay: T + 170, easing: "cubic-bezier(.2,.9,.3,1)", ...fill });
-  q(".ace-slash").animate([{ transform: "translateX(-140%) skewX(-24deg)" }, { transform: "translateX(420%) skewX(-24deg)" }], { duration: 560, delay: T + 300, easing: "cubic-bezier(.4,0,.2,1)", ...fill });
-  q(".ace-sub").animate([{ opacity: 0, transform: "translateY(8px)" }, { opacity: 1, transform: "none" }], { duration: 300, delay: T + 420, ...fill });
+  const dock = document.querySelector(".dock-inner");   // sits at the bottom centre, just above the controls, like the game's kill banner
+  const bottom = dock ? Math.max(24, window.innerHeight - dock.getBoundingClientRect().top + 14) : 140;
+  el.style.setProperty("--ace-bottom", Math.min(bottom, window.innerHeight * .55) + "px");
+  const q = sel => el.querySelector(sel), emb = q(".ace-emb"), hud = q(".hud"), glyph = q(".glyph"), segs = el.querySelectorAll(".seg"), fl = q(".ace-flash");
+  const both = { fill: "both" };
+  emb.animate([{ opacity: 0, transform: "scale(.55)" }, { opacity: 1, transform: "scale(1.08)", offset: .7 }, { opacity: 1, transform: "scale(1)" }], { duration: 240, easing: "cubic-bezier(.2,.9,.3,1)", ...both });
+  hud.animate([{ opacity: 0, transform: "scale(1.35)" }, { opacity: 1, transform: "scale(1)" }], { duration: 320, easing: "cubic-bezier(.2,.9,.3,1)", ...both });
+  const suits = ["S", "H", "D", "C"], step = 260, t0 = 120;
+  const beat = (k, big) => {
+    segs[k].classList.add("lit");
+    emb.animate([{ transform: `scale(${big ? 1.32 : 1.14})` }, { transform: "scale(1)" }], { duration: big ? 420 : 260, easing: "cubic-bezier(.2,.9,.3,1)" });
+    hud.animate([{ transform: `scale(${big ? 1.22 : 1.1})` }, { transform: "scale(1)" }], { duration: big ? 520 : 300, easing: "cubic-bezier(.2,.9,.3,1)" });
+    fl.animate([{ opacity: big ? 1 : .75, transform: "translate(-50%,-50%) scale(.6)" }, { opacity: 0, transform: `translate(-50%,-50%) scale(${big ? 1.9 : 1.3})` }], { duration: big ? 520 : 300, easing: "ease-out" });
+  };
+  suits.forEach((su, k) => setTimeout(() => {
+    glyph.textContent = GLYPH[su]; glyph.classList.toggle("red", su === "H" || su === "D");
+    beat(k, false); sfx.pip(k); shake(.08, 140); buzz(12);
+  }, t0 + k * step));
+  const T = t0 + 4 * step + 120;
   setTimeout(() => {
-    pips[4].classList.add("lit"); sfx.ace(); flash("white", .6, 380); shake(.55, 520); buzz([30, 30, 70]); party(2400);
-    const c = mid(q(".ace-emblem"));
-    fx.burst(c.x, c.y, { count: 70, spread: 360, power: 1.2, kinds: ["c", "c", "s"], cols: ["#ff4655", "#ece8e1", "#f5c96a", "#ffffff"] });
-    fx.ring(c.x, c.y, { count: 30 });
-  }, T + 200);
-  const out = el.animate([{ opacity: 1, transform: "none" }, { opacity: 0, transform: "translateY(-16px) scale(.97)" }], { duration: 420, delay: T + 2000, ...fill });
+    glyph.textContent = "A"; glyph.classList.remove("red"); glyph.classList.add("ace");
+    beat(4, true); sfx.ace(); flash("white", .45, 380); shake(.4, 460); buzz([30, 30, 70]); party(2200);
+    q(".ace-wave").animate([{ opacity: .95, transform: "translate(-50%,-50%) scale(.8)" }, { opacity: 0, transform: "translate(-50%,-50%) scale(3.4)" }], { duration: 760, easing: "cubic-bezier(.1,.7,.3,1)" });
+    q(".ace-word").animate([{ opacity: 0, transform: "translateY(14px) scale(1.25)", letterSpacing: ".55em" }, { opacity: 1, transform: "none", letterSpacing: ".1em" }], { duration: 360, easing: "cubic-bezier(.2,.9,.3,1)", ...both });
+    el.querySelectorAll(".ace-streak").forEach(sk => sk.animate([{ width: "0px", opacity: 1 }, { width: "min(30vw,190px)", opacity: 1, offset: .6 }, { width: "min(30vw,190px)", opacity: .85 }], { duration: 700, easing: "cubic-bezier(.2,.9,.3,1)", ...both }));
+    const c = mid(emb);
+    fx.burst(c.x, c.y, { count: 60, spread: 360, power: 1.1, kinds: ["c", "s", "s"], cols: ["#5ef2c2", "#ffffff", "#bff9e6", "#ff4655"] });
+    fx.ring(c.x, c.y, { count: 28 });
+  }, T);
+  const out = el.animate([{ opacity: 1, transform: "none" }, { opacity: 0, transform: "translateY(18px)" }], { duration: 380, delay: T + 1700, ...both });
   const done = () => { el.getAnimations({ subtree: true }).forEach(a => a.cancel()); el.classList.remove("on"); el.innerHTML = ""; aceBusy = false; };
   out.onfinish = done;
-  setTimeout(() => { if (aceBusy) done(); }, T + 2800);
+  setTimeout(() => { if (aceBusy) done(); }, T + 2500);
 }
 /* Win animations take turns: drift, knife, ace, drift… */
 const WIN_ANIMS = ["drift", "knife", "ace"];
