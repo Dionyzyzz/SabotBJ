@@ -29,7 +29,8 @@ Table de blackjack multijoueur en temps réel : jusqu'à cinq joueurs contre la 
 - **Sur le tapis** : un sabot d'où partent les cartes (avec la carte rouge de coupe), un bac qui se remplit des cartes jouées, le rack de jetons de la banque. La banque paie les gagnants et ramasse les mises perdues en jetons volants. Elle vérifie sa carte cachée sous un 10 ou un As.
 - **Joueurs** : couronne pour le meneur de la table, anneau-chrono de 30 s autour de la place qui joue.
 - **Votre tour** : la caméra zoome sur votre main, qui respire, le reste de la table s'assombrit (vignettage, autres places désaturées). Quand la banque joue, la caméra passe sur ses cartes au rythme d'un battement de cœur.
-- **Suspense** : les cartes que vous tirez arrivent face cachée puis se retournent. Le résultat, les conseils et les boutons attendent la carte, et la banque ne joue qu'après.
+- **Suspense** : les cartes que vous tirez arrivent face cachée puis se retournent. Un court temps de lecture (0,45 s) précède « SAUTÉ » ou « 21 », et la banque ne joue qu'après.
+- **Force de la main** : une main à 19 ou 20 brille (lueur dorée, halo, reflet, étincelles) ; une main fragile (12 à 16) fait pulser son total en rouge pendant votre tour. Une bonne main battue par la banque déclenche une déception (« SI PRÈS… » ou « DOMMAGE… », cartes qui ternissent, petite pluie, trombone triste) ; une victoire avec une main faible donne « OUF ! ».
 - **Éclats** : reflet doré sur une main à 21, reflet holographique sur un blackjack, poussière dorée qui flotte sur le tapis, jetons qui scintillent, bouton « Miser » qui appelle au clic.
 - **Défausse** : bac en verre où les cartes jouées se retournent face cachée et s'empilent à chaque nouvelle donne.
 - **Niveau** : chaque main rapporte de l'XP (plus pour une victoire, un double gagnant, un blackjack ou une série). L'anneau à côté du nom se remplit, avec une fête à chaque niveau. Gardé sur l'appareil.
