@@ -590,6 +590,13 @@ body.no-fx .hand::before,body.no-fx .hand::after,body.no-fx .hand.hot .card::bef
 .track canvas{position:absolute;inset:0;width:100%;height:100%;opacity:0}
 .track img{position:absolute;left:0;top:0;height:auto;opacity:0;transform-origin:50% 50%;filter:drop-shadow(0 8px 6px rgba(0,0,0,.55));will-change:transform}
 body.no-fx .track{display:none}
+
+/* ---------- Win animation: butterfly knife over the screen, green screen keyed live ---------- */
+.knife{position:fixed;right:0;bottom:0;width:min(100vw,880px);height:auto;aspect-ratio:4/3;z-index:26;pointer-events:none;opacity:0;transition:opacity .25s}
+.knife.on{opacity:1}
+#knifeVid{position:fixed;left:0;top:0;width:2px;height:2px;opacity:0;pointer-events:none}
+@media (min-width:761px){ .knife{width:min(62vw,880px)} }
+body.no-fx .knife{display:none}
 </style>
 
 <div class="bokeh" id="bokeh" aria-hidden="true"></div>
@@ -644,6 +651,8 @@ body.no-fx .track{display:none}
 <div class="flash" id="flash"></div>
 <div class="overlay" id="overlay" aria-hidden="true"></div>
 <canvas id="fx" aria-hidden="true"></canvas>
+<canvas id="knife" class="knife" aria-hidden="true"></canvas>
+<video id="knifeVid" src="knife.mp4" playsinline preload="auto" muted aria-hidden="true"></video>
 
 <script>
 (() => {
@@ -1967,7 +1976,7 @@ function myResult(p, i, R) {
   const bj = p.hands.some(h => h.result === "bj"), dblWin = p.hands.some(h => h.doubled && h.result === "win");
   settleChips(p, i, true);
   if (net > 0) {
-    setTimeout(drift, 650);   // the car drifts across the felt
+    setTimeout(winAnim, 650);   // drift or knife, in turn
     streak++; saveStreak();
     const lift = 1 + Math.min(streak - 1, 5) * .06;
     floatText(`+${fmt(net)}`, pt.x, pt.y - 20, "gold", "l");
@@ -2094,7 +2103,7 @@ function settingsHTML() {
   return `<div class="settings">${row("sound", "Son", "Jetons, cartes, fanfares de victoire.")}${row("haptics", "Vibrations", "Sur les téléphones compatibles.")}${row("effects", "Effets visuels", "Confettis, secousses, zooms et lumières.")}</div>`;
 }
 document.addEventListener("pointerdown", e => {
-  sfx.unlock();
+  sfx.unlock(); if (typeof knife !== "undefined") knife.unlock();
   const b = e.target.closest && e.target.closest("#dock .btn:not(:disabled), #dock .chipbtn:not(:disabled), .seat .btn");
   if (b) fx.ring(e.clientX, e.clientY, { count: 8, speed: .6 });
 }, { passive: true });
@@ -2406,6 +2415,91 @@ function drift() {
     }
   };
   requestAnimationFrame(frame);
+}
+
+
+/* ---------- Win animation: butterfly knife inspect (first 5 s of a green-screen clip, keyed live) ---------- */
+const knife = (() => {
+  const vid = $("knifeVid"), cv = $("knife");
+  let gl = null, ctx = null, failed = false, playing = false, unlocked = false, stopT = 0;
+  vid.addEventListener("error", () => { failed = true; });
+  const VS = "attribute vec2 p;varying vec2 v;void main(){v=vec2((p.x+1.)*.5,1.-(p.y+1.)*.5);gl_Position=vec4(p,0.,1.);}";
+  // alpha from how much green beats red and blue; the green fringe on the edges is pulled back
+  const FS = "precision mediump float;uniform sampler2D t;varying vec2 v;void main(){vec4 c=texture2D(t,v);float m=max(c.r,c.b);float g=c.g-m;"
+    + "float a=1.-smoothstep(.1,.3,g);vec3 col=vec3(c.r,min(c.g,m+.03),c.b);gl_FragColor=vec4(col*a,a);}";
+  function setup() {
+    if (gl || ctx) return;
+    try {
+      gl = cv.getContext("webgl", { premultipliedAlpha: true, alpha: true, antialias: false });
+      if (gl) {
+        const sh = (type, src) => { const o = gl.createShader(type); gl.shaderSource(o, src); gl.compileShader(o); if (!gl.getShaderParameter(o, gl.COMPILE_STATUS)) throw new Error("shader"); return o; };
+        const pr = gl.createProgram();
+        gl.attachShader(pr, sh(gl.VERTEX_SHADER, VS)); gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, FS)); gl.linkProgram(pr); gl.useProgram(pr);
+        const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]), gl.STATIC_DRAW);
+        const loc = gl.getAttribLocation(pr, "p"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+        const tex = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, tex);
+        [gl.TEXTURE_WRAP_S, gl.TEXTURE_WRAP_T].forEach(k => gl.texParameteri(gl.TEXTURE_2D, k, gl.CLAMP_TO_EDGE));
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.clearColor(0, 0, 0, 0);
+        return;
+      }
+    } catch (e) { gl = null; }
+    ctx = cv.getContext("2d", { willReadFrequently: true });   // fallback without WebGL: key on the CPU at half size
+  }
+  function draw() {
+    if (gl) {
+      gl.viewport(0, 0, cv.width, cv.height); gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, vid);
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+    } else if (ctx) {
+      ctx.drawImage(vid, 0, 0, cv.width, cv.height);
+      const im = ctx.getImageData(0, 0, cv.width, cv.height), d = im.data;
+      for (let i = 0; i < d.length; i += 4) {
+        const m = Math.max(d[i], d[i + 2]), g = (d[i + 1] - m) / 255;
+        const a = g <= .1 ? 1 : g >= .3 ? 0 : 1 - (g - .1) / .2;
+        d[i + 1] = Math.min(d[i + 1], m + 8); d[i + 3] = a * 255;
+      }
+      ctx.putImageData(im, 0, 0);
+    }
+  }
+  const loop = () => { if (!playing) return; try { draw(); } catch (e) { stop(); failed = true; return; } requestAnimationFrame(loop); };
+  function stop() {
+    playing = false; clearTimeout(stopT);
+    cv.classList.remove("on");
+    try { vid.pause(); } catch (e) {}
+  }
+  return {
+    unlock() {   // first tap: lets the clip start later on phones that require a gesture
+      if (unlocked) return; unlocked = true;
+      const p = vid.play(); if (p && p.then) p.then(() => { vid.pause(); vid.currentTime = 0; }).catch(() => {});
+    },
+    play() {
+      if (playing || failed || vid.readyState < 2) return false;
+      setup();
+      const w = gl ? (vid.videoWidth || 720) : 360, h = gl ? (vid.videoHeight || 540) : 270;
+      if (cv.width !== w) { cv.width = w; cv.height = h; }
+      playing = true;
+      vid.currentTime = 0; vid.volume = .9; vid.muted = !fxSet.sound;
+      const go = () => { cv.classList.add("on"); loop(); };
+      const p = vid.play();
+      if (p && p.then) p.then(go).catch(() => { vid.muted = true; vid.play().then(go).catch(() => { stop(); }); });
+      else go();
+      vid.onended = stop;
+      stopT = setTimeout(stop, 5600);
+      return true;
+    },
+  };
+})();
+/* Win animations take turns: drift, knife, drift… */
+const WIN_ANIMS = ["drift", "knife"];
+let winIdx = (() => { try { return (+localStorage.getItem("sabot.winfx")) || 0; } catch (e) { return 0; } })();
+function winAnim() {
+  if (!motionOn()) return;
+  const name = WIN_ANIMS[winIdx % WIN_ANIMS.length];
+  winIdx = (winIdx + 1) % 1000; try { localStorage.setItem("sabot.winfx", String(winIdx)); } catch (e) {}
+  if (name === "knife" && knife.play()) return;
+  drift();   // the knife clip is not ready: fall back on the drift
 }
 
 let shownRound = null;
