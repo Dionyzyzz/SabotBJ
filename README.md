@@ -32,6 +32,7 @@ Table de blackjack multijoueur en temps réel : jusqu'à cinq joueurs contre la 
 - **Suspense** : les cartes que vous tirez arrivent face cachée puis se retournent. Un court temps de lecture (0,45 s) précède « SAUTÉ » ou « 21 », et la banque ne joue qu'après.
 - **Force de la main** : une main à 19 ou 20 brille (lueur dorée, halo, reflet, étincelles) ; une main fragile (12 à 16) fait pulser son total en rouge pendant votre tour. Une bonne main battue par la banque déclenche une déception (« SI PRÈS… » ou « DOMMAGE… », cartes qui ternissent, petite pluie, trombone triste) ; une victoire avec une main faible donne « OUF ! ».
 - **Éclats** : reflet doré sur une main à 21, reflet holographique sur un blackjack, poussière dorée qui flotte sur le tapis, jetons qui scintillent, bouton « Miser » qui appelle au clic.
+- **Drift** : à chaque main gagnée, une voiture vue de dessus entre sur le tapis, fait un donut en dérapage (traces de pneus sur le feutre, fumée, crissement) et repart.
 - **Défausse** : bac en verre où les cartes jouées se retournent face cachée et s'empilent à chaque nouvelle donne.
 - **Niveau** : chaque main rapporte de l'XP (plus pour une victoire, un double gagnant, un blackjack ou une série). L'anneau à côté du nom se remplit, avec une fête à chaque niveau. Gardé sur l'appareil.
 - **Ambiance** : lumières de salle floues en fond, cartes qui suivent la souris sur ordinateur.
