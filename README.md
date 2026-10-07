@@ -35,6 +35,7 @@ Table de blackjack multijoueur en temps réel : jusqu'à cinq joueurs contre la 
 - **Animations de victoire, à tour de rôle** :
   - *Drift* : une voiture vue de dessus entre sur le tapis, fait un donut en dérapage (traces de pneus sur le feutre, fumée, crissement) et repart.
   - *Couteau papillon* : les 5 premières secondes d'une vidéo sur fond vert (`knife.mp4`), détourée en direct dans le navigateur (shader WebGL, repli en canvas 2D), affichées en bas à droite comme dans un jeu de tir. Avec le son du clip si le son est activé.
+  - *ACE* : bannière façon Valorant. Les quatre As arrivent un par un en éventail (marqueurs qui s'allument, son qui monte), puis l'emblème hexagonal et « ACE » frappent avec une onde de choc et une gerbe d'éclats.
 - **Défausse** : bac en verre où les cartes jouées se retournent face cachée et s'empilent à chaque nouvelle donne.
 - **Niveau** : chaque main rapporte de l'XP (plus pour une victoire, un double gagnant, un blackjack ou une série). L'anneau à côté du nom se remplit, avec une fête à chaque niveau. Gardé sur l'appareil.
 - **Ambiance** : lumières de salle floues en fond, cartes qui suivent la souris sur ordinateur.
