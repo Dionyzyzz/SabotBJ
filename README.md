@@ -27,7 +27,11 @@ Table de blackjack multijoueur en temps réel : jusqu'à cinq joueurs contre la 
 - **Mobile** : grands boutons en 2×2, conseiller en panneau coulissant, barre d'état fixe.
 - **Effets** : ampoules de casino qui clignotent sur le rebord du tapis, projecteur sur la main jouée, faisceaux de lumière, confettis et jetons qui volent, secousses et zooms de caméra, gros textes animés (« BLACKJACK ! », « SAUTÉ ! », « LA BANQUE SAUTE ! », « 21 ! »), compteur de jetons qui défile, série de victoires, sons générés à la volée (Web Audio, aucun fichier) et vibrations sur téléphone. Les effets suivent l'état partagé : chaque joueur voit aussi les moments des autres.
 - **Sur le tapis** : un sabot d'où partent les cartes (avec la carte rouge de coupe), un bac qui se remplit des cartes jouées, le rack de jetons de la banque. La banque paie les gagnants et ramasse les mises perdues en jetons volants. Elle vérifie sa carte cachée sous un 10 ou un As.
-- **Joueurs** : avatar coloré, couronne pour le meneur de la table, anneau-chrono de 30 s autour de la place qui joue.
+- **Joueurs** : couronne pour le meneur de la table, anneau-chrono de 30 s autour de la place qui joue.
+- **Votre tour** : la caméra zoome sur votre main, qui respire, le reste de la table s'assombrit (vignettage, autres places désaturées). Quand la banque joue, la caméra passe sur ses cartes au rythme d'un battement de cœur.
+- **Suspense** : les cartes que vous tirez arrivent face cachée puis se retournent. Le résultat, les conseils et les boutons attendent la carte, et la banque ne joue qu'après.
+- **Éclats** : reflet doré sur une main à 21, reflet holographique sur un blackjack, poussière dorée qui flotte sur le tapis, jetons qui scintillent, bouton « Miser » qui appelle au clic.
+- **Défausse** : bac en verre où les cartes jouées se retournent face cachée et s'empilent à chaque nouvelle donne.
 - **Niveau** : chaque main rapporte de l'XP (plus pour une victoire, un double gagnant, un blackjack ou une série). L'anneau à côté du nom se remplit, avec une fête à chaque niveau. Gardé sur l'appareil.
 - **Ambiance** : lumières de salle floues en fond, cartes qui suivent la souris sur ordinateur.
 - **Réglages** (☰ → Réglages) : son, vibrations et effets visuels, gardés sur l'appareil. Les animations sont réduites si le système le demande.
