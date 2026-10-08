@@ -32,10 +32,12 @@ Table de blackjack multijoueur en temps réel : jusqu'à cinq joueurs contre la 
 - **Suspense** : les cartes que vous tirez arrivent face cachée puis se retournent. Un court temps de lecture (0,45 s) précède « SAUTÉ » ou « 21 », et la banque ne joue qu'après.
 - **Force de la main** : une main à 19 ou 20 brille (lueur dorée, halo, reflet, étincelles) ; une main fragile (12 à 16) fait pulser son total en rouge pendant votre tour. Une bonne main battue par la banque déclenche une déception (« SI PRÈS… » ou « DOMMAGE… », cartes qui ternissent, petite pluie, trombone triste) ; une victoire avec une main faible donne « OUF ! ».
 - **Éclats** : reflet doré sur une main à 21, reflet holographique sur un blackjack, poussière dorée qui flotte sur le tapis, jetons qui scintillent, bouton « Miser » qui appelle au clic.
-- **Animations de victoire, à tour de rôle** :
+- **Animations de victoire**, choisies dans votre collection (bouton ✦ en haut, ou ☰ → Réglages) :
   - *Drift* : une voiture vue de dessus entre sur le tapis, fait un donut en dérapage (traces de pneus sur le feutre, fumée, crissement) et repart.
   - *Couteau papillon* : les 5 premières secondes d'une vidéo sur fond vert (`knife.mp4`), détourée en direct dans le navigateur (shader WebGL, repli en canvas 2D), affichées en bas à droite comme dans un jeu de tir. Avec le son du clip si le son est activé.
   - *ACE* : d'après la bannière d'élimination de Valorant. Un emblème rond en bas au centre (anneau blanc, viseur de lignes fines, chevrons) ; à chaque As, un segment turquoise s'allume, l'emblème pulse et le symbole du centre passe à ♠ ♥ ♦ ♣ sur un son de cloche qui monte ; au 5e, un « A », une onde de choc et « ACE » encadré de traits de lumière.
+  - *Vos vidéos* : importez un clip sur fond vert (MP4, WebM ou MOV, 50 Mo max). Il est détouré comme le couteau, avec un aperçu sur le tapis : nom, réglage du détourage, position (plein écran, centre ou coin), son on/off. Au-delà de 5 s, on choisit l'extrait de 5 s à garder. Les vidéos restent dans le navigateur (IndexedDB) et ne sont envoyées nulle part.
+  - Chaque animation s'active ou se désactive à l'interrupteur et se lance avec « Essayer ». Seules les animations actives passent, à tour de rôle ou au hasard.
 - **Défausse** : bac en verre où les cartes jouées se retournent face cachée et s'empilent à chaque nouvelle donne.
 - **Niveau** : chaque main rapporte de l'XP (plus pour une victoire, un double gagnant, un blackjack ou une série). L'anneau à côté du nom se remplit, avec une fête à chaque niveau. Gardé sur l'appareil.
 - **Ambiance** : lumières de salle floues en fond, cartes qui suivent la souris sur ordinateur.

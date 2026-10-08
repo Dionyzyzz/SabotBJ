@@ -47,6 +47,7 @@ button{font:inherit;color:inherit;touch-action:manipulation;-webkit-tap-highligh
 .appbar-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .brand-mini{font-family:var(--font-display);font-style:italic;font-size:22px;line-height:1}
 .brand-mini b{font-style:normal;font-weight:700;color:var(--brass-hi)}
+.brand-mini{white-space:nowrap}
 .appbar-actions{display:flex;gap:8px;align-items:center}
 .icon-btn{position:relative;width:36px;height:36px;border-radius:50%;border:1px solid var(--brass);background:var(--rail);color:var(--brass-hi);display:grid;place-items:center;cursor:pointer}
 .icon-btn:hover,.icon-btn[aria-pressed="true"]{background:var(--rail-hi)}
@@ -57,6 +58,7 @@ button{font:inherit;color:inherit;touch-action:manipulation;-webkit-tap-highligh
 .status{min-height:24px;font-size:15px;color:var(--ink-dim);font-variant-numeric:tabular-nums;min-width:0}
 .adv-btn{flex:none;border:1px solid var(--brass);background:var(--rail);color:var(--brass-hi);font-weight:600;font-size:13.5px;padding:7px 13px;border-radius:999px;cursor:pointer;display:inline-flex;gap:8px;align-items:center}
 .adv-btn:hover,.adv-btn[aria-pressed="true"]{background:var(--rail-hi)}
+@media (max-width:400px){ .appbar-row{gap:8px} .brand-row{gap:8px!important} .brand-mini{font-size:20px} .appbar-actions{gap:6px} .appbar .icon-btn{width:34px;height:34px} .adv-btn{padding:7px 11px} }
 .status strong{color:var(--ink);font-weight:600}
 
 /* Table */
@@ -198,7 +200,7 @@ body.busy .dock .btn,body.busy .dock .chipbtn,body.busy .seat .btn{pointer-event
 .rules{font-size:12px;color:var(--ink-faint);display:flex;flex-wrap:wrap;gap:4px 14px;justify-content:space-between;align-items:center;padding-bottom:8px}
 .rules ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:4px 14px}
 
-.toast{position:fixed;left:50%;top:calc(16px + env(safe-area-inset-top,0px));transform:translateX(-50%);background:var(--brass);color:var(--brass-ink);font-weight:600;padding:9px 16px;border-radius:9px;box-shadow:0 10px 30px rgba(0,0,0,.5);z-index:20;max-width:calc(100% - 32px);font-size:14px}
+.toast{position:fixed;left:50%;top:calc(16px + env(safe-area-inset-top,0px));transform:translateX(-50%);background:var(--brass);color:var(--brass-ink);font-weight:600;padding:9px 16px;border-radius:9px;box-shadow:0 10px 30px rgba(0,0,0,.5);z-index:45;max-width:calc(100% - 32px);font-size:14px}
 
 /* Advisor window: basic-strategy chart + live odds from the shoe */
 .adv-btn kbd,.adv-head kbd{font-family:var(--font-body);font-size:10.5px;border:1px solid currentColor;border-radius:4px;padding:0 4px;opacity:.65}
@@ -592,12 +594,110 @@ body.no-fx .hand::before,body.no-fx .hand::after,body.no-fx .hand.hot .card::bef
 .track img{position:absolute;left:0;top:0;height:auto;opacity:0;transform-origin:50% 50%;filter:drop-shadow(0 8px 6px rgba(0,0,0,.55));will-change:transform}
 body.no-fx .track{display:none}
 
-/* ---------- Win animation: butterfly knife over the screen, green screen keyed live ---------- */
-.knife{position:fixed;right:0;bottom:0;width:min(100vw,880px);height:auto;aspect-ratio:4/3;z-index:26;pointer-events:none;opacity:0;transition:opacity .25s}
-.knife.on{opacity:1}
-#knifeVid{position:fixed;left:0;top:0;width:2px;height:2px;opacity:0;pointer-events:none}
-@media (min-width:761px){ .knife{width:min(62vw,880px)} }
-body.no-fx .knife{display:none}
+/* ---------- Win animation: green-screen clips (the knife, the player's own videos), keyed live ---------- */
+.clip{position:fixed;z-index:26;pointer-events:none;opacity:0;transition:opacity .25s;object-fit:contain}
+.clip.on{opacity:1}
+.clip[data-place="corner"]{right:0;bottom:0;width:min(100vw,880px);height:min(75vw,660px,85vh);object-position:right bottom}
+.clip[data-place="center"]{left:50%;top:50%;transform:translate(-50%,-50%);width:min(86vw,760px);height:min(64vh,560px)}
+.clip[data-place="full"]{left:0;top:0;width:100vw;height:100vh;height:100dvh}
+#clipVid,#pvVid{position:fixed;left:0;top:0;width:2px;height:2px;opacity:0;pointer-events:none}
+@media (min-width:761px){ .clip[data-place="corner"]{width:min(62vw,880px);height:min(46.5vw,660px,85vh)} }
+body.no-fx .clip{display:none}
+
+/* ---------- Animation collection: switch each win animation on or off, import green-screen clips ---------- */
+html.store-open{overflow:hidden}
+.set-link{width:100%;border:0;text-align:left;color:inherit;font:inherit}
+.set-link>i{font-style:normal;font-size:22px;line-height:1;color:var(--brass-hi)}
+.set-link:hover{background:rgba(201,164,92,.12)}
+.store-scrim{position:fixed;inset:0;z-index:40;background:rgba(10,5,4,.66);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);animation:store-fade .2s both}
+@keyframes store-fade{from{opacity:0}}
+.store{position:fixed;z-index:41;left:50%;top:50%;transform:translate(-50%,-50%);width:min(780px,calc(100vw - 32px));max-height:min(88vh,860px);display:flex;flex-direction:column;
+  background:linear-gradient(var(--rail),var(--room-2));border:1px solid var(--brass);border-radius:18px;overflow:hidden;
+  box-shadow:0 30px 80px rgba(0,0,0,.7),inset 0 1px 0 rgba(231,203,141,.22);animation:store-in .3s cubic-bezier(.2,.9,.3,1) both}
+@keyframes store-in{from{opacity:0;transform:translate(-50%,-46%) scale(.96)}to{opacity:1;transform:translate(-50%,-50%)}}
+.store.drag{box-shadow:0 0 0 3px var(--brass-hi),0 30px 80px rgba(0,0,0,.7)}
+.store-head{display:flex;align-items:center;gap:10px;padding:16px 18px 12px;border-bottom:1px solid var(--rail-hi);flex:none}
+.store-head>div{flex:1;min-width:0}
+.store-kick{margin:0;font-size:10.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint)}
+.store-head h2{margin:2px 0 0;font-family:var(--font-display);font-style:italic;font-weight:500;font-size:22px;line-height:1.1;color:var(--brass-hi)}
+.store-head .adv-x{flex:none;font-size:26px}
+.store-count{flex:none;font-size:12px;color:var(--ink-dim);font-variant-numeric:tabular-nums;background:var(--brass-ink);border:1px solid var(--rail-hi);padding:3px 10px;border-radius:999px;white-space:nowrap}
+.store-count b{color:var(--brass-hi)}
+.store-body{overflow:auto;overscroll-behavior:contain;padding:16px 18px 20px;display:flex;flex-direction:column;gap:14px}
+.anim-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+.anim-card{position:relative;display:flex;flex-direction:column;border-radius:14px;background:var(--room);border:1px solid var(--rail-hi);overflow:hidden;transition:border-color .2s,box-shadow .2s}
+.anim-card.on{border-color:var(--brass);box-shadow:0 0 0 1px rgba(201,164,92,.45),0 12px 26px rgba(0,0,0,.4)}
+.anim-art{position:relative;aspect-ratio:16/10;overflow:hidden;display:grid;place-items:center;
+  background:radial-gradient(90% 80% at 50% 25%,var(--felt-hi),var(--felt) 50%,var(--felt-lo));box-shadow:inset 0 0 0 1px rgba(201,164,92,.3),inset 0 0 30px rgba(0,0,0,.45)}
+.anim-art>:not(.anim-badge){transition:filter .25s,opacity .25s,transform .35s cubic-bezier(.2,.9,.3,1)}
+.anim-card:not(.on) .anim-art>:not(.anim-badge){filter:grayscale(1) brightness(.55);opacity:.75}
+.anim-card.on:hover .anim-art>:not(.anim-badge){transform:scale(1.05)}
+.anim-badge{position:absolute;left:8px;top:8px;font-size:9.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;padding:2px 7px;border-radius:999px;background:rgba(0,0,0,.5);color:var(--brass-hi)}
+.anim-meta{display:flex;align-items:center;gap:10px;padding:10px 12px 6px}
+.anim-txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.anim-txt b{font-weight:700;color:var(--ink);line-height:1.25;overflow-wrap:anywhere}
+.anim-txt small{font-size:12px;color:var(--ink-dim);line-height:1.3}
+.anim-actions{display:flex;gap:6px;padding:4px 12px 12px;margin-top:auto}
+.btn.danger{color:var(--lose);border-color:var(--lose)}
+.art-clip{max-width:86%;max-height:86%;object-fit:contain;filter:drop-shadow(0 6px 10px rgba(0,0,0,.5))}
+.art-drift{position:relative;width:100%;height:100%}
+.art-drift img{position:absolute;left:50%;top:52%;width:56%;transform:translate(-50%,-50%) rotate(-16deg);filter:drop-shadow(0 6px 6px rgba(0,0,0,.55))}
+.art-skid{position:absolute;inset:0;width:100%;height:100%}
+.art-skid path{fill:none;stroke:rgba(0,0,0,.32);stroke-width:3;stroke-linecap:round}
+.anim-art .art-ace{opacity:1;width:44%;--teal:#5ef2c2;--line:rgba(222,230,234,.85);--v-red:#ff4655}
+.art-none{font-size:34px;color:var(--brass-hi)}
+.anim-add{align-items:center;justify-content:center;gap:4px;min-height:200px;border:1.5px dashed var(--brass);background:rgba(201,164,92,.06);color:var(--ink);cursor:pointer;padding:16px;text-align:center}
+.anim-add:hover{background:rgba(201,164,92,.13)}
+.anim-add small{font-size:12px;color:var(--ink-dim)}
+.add-plus{display:grid;place-items:center;width:52px;height:52px;border-radius:50%;background:var(--brass);color:var(--brass-ink);font-size:32px;line-height:1;font-weight:300;margin-bottom:6px;box-shadow:0 0 0 6px rgba(201,164,92,.18)}
+.anim-card.fresh{animation:card-fresh 1.4s cubic-bezier(.2,.9,.3,1)}
+@keyframes card-fresh{0%{transform:scale(.85);box-shadow:0 0 0 0 rgba(255,213,107,.9)}35%{transform:scale(1.04)}100%{transform:none;box-shadow:0 0 0 18px rgba(255,213,107,0)}}
+.store-foot{display:flex;align-items:center;justify-content:space-between;gap:10px 12px;flex-wrap:wrap;border-top:1px solid var(--rail-hi);padding-top:12px}
+.store-foot>span{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-dim)}
+.seg-ctl{display:inline-flex;flex-wrap:wrap;padding:3px;border-radius:10px;background:var(--brass-ink);border:1px solid var(--rail-hi);gap:2px}
+.seg-ctl button{border:0;background:transparent;color:var(--ink-dim);padding:6px 12px;border-radius:7px;font-weight:600;font-size:13px;cursor:pointer}
+.seg-ctl button[aria-pressed="true"]{background:var(--brass);color:var(--brass-ink)}
+.store-none{margin:0;text-align:center;color:var(--ink-dim);font-size:13px}
+.store-note{margin:-4px 0 0;font-size:12px;color:var(--ink-faint);text-align:center}
+/* import: a small "screen" shows the keyed clip where it will play */
+.imp-stage{position:relative;flex:none;height:min(40vh,330px);aspect-ratio:var(--ar,16/10);max-width:100%;margin-inline:auto;border-radius:12px;overflow:hidden;
+  background:radial-gradient(90% 80% at 50% 25%,var(--felt-hi),var(--felt) 50%,var(--felt-lo));box-shadow:inset 0 0 0 2px var(--brass),inset 0 0 40px rgba(0,0,0,.45)}
+.imp-stage canvas{position:absolute;object-fit:contain}
+.imp-stage[data-place="full"] canvas{inset:0;width:100%;height:100%}
+.imp-stage[data-place="center"] canvas{left:50%;top:50%;width:80%;height:66%;transform:translate(-50%,-50%)}
+.imp-stage[data-place="corner"] canvas{right:0;bottom:0;width:62%;height:78%;object-position:right bottom}
+.imp-load{position:absolute;inset:0;display:grid;place-items:center;margin:0;padding:16px;text-align:center;color:var(--ink-dim);font-size:13.5px}
+.imp-warn{margin:0;padding:8px 12px;border-radius:9px;background:rgba(241,144,132,.12);border:1px solid rgba(241,144,132,.45);color:var(--lose);font-size:13px}
+.imp-field{display:flex;flex-direction:column;gap:6px}
+.imp-field>span:first-child{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-dim)}
+.imp-field em{font-style:normal;font-weight:600;letter-spacing:0;text-transform:none;color:var(--brass-hi);margin-left:6px}
+#impName{background:var(--brass-ink);border:1px solid var(--rail-hi);color:var(--ink);border-radius:9px;padding:9px 12px;font:inherit;font-size:16px;width:100%}
+#impName:focus{border-color:var(--brass)}
+.imp input[type=range]{width:100%;accent-color:var(--brass);margin:0}
+.imp-ends{display:flex;justify-content:space-between;font-size:11px;color:var(--ink-faint);margin-top:-4px}
+.imp .seg-ctl{align-self:flex-start}
+.imp-actions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+@media (max-width:760px){
+  .store{left:0;right:0;top:auto;bottom:0;transform:none;width:auto;max-height:92vh;max-height:92dvh;border-radius:20px 20px 0 0;border-bottom:0;
+    padding-bottom:env(safe-area-inset-bottom,0px);animation:sheet-up .28s cubic-bezier(.22,.61,.36,1) both}
+  .store::before{content:"";align-self:center;width:40px;height:4px;border-radius:2px;background:var(--ink-faint);margin:8px 0 -6px;flex:none}
+  .store-head{padding:12px 14px 10px}
+  .store-head h2{font-size:20px}
+  .store-body{padding:14px 14px 18px;gap:12px}
+  .anim-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .anim-meta{padding:8px 10px 4px;gap:8px;align-items:flex-start}
+  .anim-meta .switch{margin-top:2px}
+  .anim-txt small{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:11.5px}
+  .anim-actions{padding:4px 10px 10px;flex-wrap:wrap}
+  .anim-actions .btn{flex:1;justify-content:center;padding:6px 6px}
+  .anim-add{min-height:150px}
+  .imp-stage{height:min(34vh,300px)}
+  .imp-stage[data-place="corner"] canvas{width:100%;height:36%}
+  .imp-stage[data-place="center"] canvas{width:88%;height:56%}
+  .imp-actions{flex-direction:column-reverse}
+  .imp-actions .btn{width:100%;justify-content:center;padding:11px 16px}
+}
+@media (prefers-reduced-motion:reduce){ .store,.store-scrim,.anim-card.fresh{animation:none} }
 
 /* ---------- Win animation: ACE, after Valorant's kill banner (ring emblem, kill arc, HUD lines), with the four aces ---------- */
 .ace{position:fixed;inset:0;z-index:27;pointer-events:none;display:none;--teal:#5ef2c2;--line:rgba(222,230,234,.85);--v-red:#ff4655}
@@ -617,7 +717,7 @@ body.no-fx .knife{display:none}
 .ace-emb .seg.lit{stroke:var(--teal);filter:drop-shadow(0 0 5px var(--teal))}
 .ace-emb .glyph{font:700 46px/1 var(--font-display);fill:#fff;text-anchor:middle;dominant-baseline:central;filter:drop-shadow(0 0 6px rgba(94,242,194,.8))}
 .ace-emb .glyph.red{fill:var(--v-red);filter:drop-shadow(0 0 6px rgba(255,70,85,.8))}
-.ace-emb .glyph.ace{font:400 58px/1 "Bebas Neue","Arial Narrow",sans-serif;fill:#fff;filter:drop-shadow(0 0 10px var(--teal))}
+.ace-emb .glyph.big{font:400 58px/1 "Bebas Neue","Arial Narrow",sans-serif;fill:#fff;filter:drop-shadow(0 0 10px var(--teal))}
 .ace-wave{position:absolute;left:50%;top:50%;width:46%;aspect-ratio:1;border-radius:50%;border:3px solid var(--teal);box-shadow:0 0 18px var(--teal);opacity:0;transform:translate(-50%,-50%)}
 .ace-flash{position:absolute;left:50%;top:50%;width:70%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.95),rgba(94,242,194,.45) 40%,transparent 70%);opacity:0;transform:translate(-50%,-50%)}
 body.no-fx .ace{display:none!important}
@@ -633,6 +733,7 @@ body.no-fx .ace{display:none!important}
       </div>
       <div class="appbar-actions">
         <button class="icon-btn" id="soundBtn" data-act="sound" aria-label="Couper le son" aria-pressed="false"></button>
+        <button class="icon-btn" id="animBtn" data-act="anims" aria-label="Animations de victoire" aria-pressed="false"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M10 2.5l1.9 5.6 5.6 1.9-5.6 1.9L10 17.5l-1.9-5.6L2.5 10l5.6-1.9z M18 14l.9 2.6 2.6.9-2.6.9L18 21l-.9-2.6-2.6-.9 2.6-.9z" fill="currentColor"/></svg><i class="dot" id="animDot" hidden></i></button>
         <button class="icon-btn" id="infoBtn" data-act="info" aria-label="Journal, classement et règles" aria-pressed="false"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><i class="dot" id="infoDot" hidden></i></button>
         <button class="adv-btn" id="advLaunch" data-act="advisor" aria-pressed="false">Conseils <kbd>C</kbd></button>
       </div>
@@ -675,9 +776,13 @@ body.no-fx .ace{display:none!important}
 <div class="flash" id="flash"></div>
 <div class="overlay" id="overlay" aria-hidden="true"></div>
 <canvas id="fx" aria-hidden="true"></canvas>
-<canvas id="knife" class="knife" aria-hidden="true"></canvas>
+<canvas id="clip" class="clip" data-place="corner" aria-hidden="true"></canvas>
 <div class="ace" id="ace" aria-hidden="true"></div>
-<video id="knifeVid" src="knife.mp4" playsinline preload="auto" muted aria-hidden="true"></video>
+<video id="clipVid" src="knife.mp4" playsinline preload="auto" muted aria-hidden="true"></video>
+<video id="pvVid" playsinline muted aria-hidden="true"></video>
+<div class="store-scrim" id="storeScrim" hidden></div>
+<section class="store" id="store" role="dialog" aria-modal="true" aria-labelledby="storeTitle" hidden></section>
+<input type="file" id="animFile" accept="video/mp4,video/webm,video/quicktime,video/*" hidden>
 
 <script>
 (() => {
@@ -2024,7 +2129,7 @@ function myResult(p, i, R) {
   settleChips(p, i, true);
   if (net > 0) {
     const anim = motionOn() ? nextWinAnim() : null, banner = anim === "ace";
-    setTimeout(() => playWinAnim(anim), banner ? 250 : 650);   // drift, knife or ace, in turn
+    setTimeout(() => playWinAnim(anim), banner ? 250 : 650);   // the next animation from the player's collection
     const say = (...a) => { if (!banner) shout(...a); };   // the ACE banner takes the stage alone
     streak++; saveStreak();
     const lift = 1 + Math.min(streak - 1, 5) * .06;
@@ -2149,10 +2254,11 @@ function setFx(k, v) {
 }
 function settingsHTML() {
   const row = (k, label, desc) => `<label class="set-row"><span><b>${label}</b><small>${desc}</small></span><input type="checkbox" class="switch" data-set="${k}"${fxSet[k] ? " checked" : ""}></label>`;
-  return `<div class="settings">${row("sound", "Son", "Jetons, cartes, fanfares de victoire.")}${row("haptics", "Vibrations", "Sur les téléphones compatibles.")}${row("effects", "Effets visuels", "Confettis, secousses, zooms et lumières.")}</div>`;
+  return `<div class="settings">${row("sound", "Son", "Jetons, cartes, fanfares de victoire.")}${row("haptics", "Vibrations", "Sur les téléphones compatibles.")}${row("effects", "Effets visuels", "Confettis, secousses, zooms et lumières.")}`
+    + `<button class="set-row set-link" data-act="anims"><span><b>Animations de victoire</b><small>${enabledAnims().length} sur ${animIds().length} actives. Importez les vôtres.</small></span><i aria-hidden="true">›</i></button></div>`;
 }
 document.addEventListener("pointerdown", e => {
-  sfx.unlock(); if (typeof knife !== "undefined") knife.unlock();
+  sfx.unlock(); if (typeof clip !== "undefined") clip.unlock();
   const b = e.target.closest && e.target.closest("#dock .btn:not(:disabled), #dock .chipbtn:not(:disabled), .seat .btn");
   if (b) fx.ring(e.clientX, e.clientY, { count: 8, speed: .6 });
 }, { passive: true });
@@ -2467,17 +2573,28 @@ function drift() {
 }
 
 
-/* ---------- Win animation: butterfly knife inspect (first 5 s of a green-screen clip, keyed live) ---------- */
-const knife = (() => {
-  const vid = $("knifeVid"), cv = $("knife");
-  let gl = null, ctx = null, failed = false, playing = false, unlocked = false, stopT = 0;
-  vid.addEventListener("error", () => { failed = true; });
+/* ---------- Green-screen clips: the butterfly knife and the player's own videos, keyed live ---------- */
+/* tol 0..1: how hard the green is pulled out (.5 = the knife's setting). */
+const keyRange = tol => { const lo = .2 * (1 - tol); return [lo, lo + .2]; };
+function cpuKey(ctx, src, w, h, tol) {   // the same key on the CPU, for thumbnails and phones without WebGL
+  const [lo, hi] = keyRange(tol), L = lo * 255, R = (hi - lo) * 255;
+  ctx.clearRect(0, 0, w, h); ctx.drawImage(src, 0, 0, w, h);
+  const im = ctx.getImageData(0, 0, w, h), d = im.data;
+  for (let i = 0; i < d.length; i += 4) {
+    const m = Math.max(d[i], d[i + 2]), g = d[i + 1] - m;
+    const a = g <= L ? 1 : g >= L + R ? 0 : 1 - (g - L) / R;
+    d[i + 1] = Math.min(d[i + 1], m + 8); d[i + 3] = a * 255;
+  }
+  ctx.putImageData(im, 0, 0);
+}
+function keyDrawer(cv) {
+  let gl = null, ctx = null, uK = null, ready = false;
   const VS = "attribute vec2 p;varying vec2 v;void main(){v=vec2((p.x+1.)*.5,1.-(p.y+1.)*.5);gl_Position=vec4(p,0.,1.);}";
   // alpha from how much green beats red and blue; the green fringe on the edges is pulled back
-  const FS = "precision mediump float;uniform sampler2D t;varying vec2 v;void main(){vec4 c=texture2D(t,v);float m=max(c.r,c.b);float g=c.g-m;"
-    + "float a=1.-smoothstep(.1,.3,g);vec3 col=vec3(c.r,min(c.g,m+.03),c.b);gl_FragColor=vec4(col*a,a);}";
+  const FS = "precision mediump float;uniform sampler2D t;uniform vec2 k;varying vec2 v;void main(){vec4 c=texture2D(t,v);float m=max(c.r,c.b);float g=c.g-m;"
+    + "float a=1.-smoothstep(k.x,k.y,g);vec3 col=vec3(c.r,min(c.g,m+.03),c.b);gl_FragColor=vec4(col*a,a);}";
   function setup() {
-    if (gl || ctx) return;
+    if (ready) return; ready = true;
     try {
       gl = cv.getContext("webgl", { premultipliedAlpha: true, alpha: true, antialias: false });
       if (gl) {
@@ -2487,6 +2604,7 @@ const knife = (() => {
         const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]), gl.STATIC_DRAW);
         const loc = gl.getAttribLocation(pr, "p"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+        uK = gl.getUniformLocation(pr, "k");
         const tex = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, tex);
         [gl.TEXTURE_WRAP_S, gl.TEXTURE_WRAP_T].forEach(k => gl.texParameteri(gl.TEXTURE_2D, k, gl.CLAMP_TO_EDGE));
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
@@ -2494,65 +2612,111 @@ const knife = (() => {
         return;
       }
     } catch (e) { gl = null; }
-    ctx = cv.getContext("2d", { willReadFrequently: true });   // fallback without WebGL: key on the CPU at half size
-  }
-  function draw() {
-    if (gl) {
-      gl.viewport(0, 0, cv.width, cv.height); gl.clear(gl.COLOR_BUFFER_BIT);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, vid);
-      gl.drawArrays(gl.TRIANGLES, 0, 6);
-    } else if (ctx) {
-      ctx.drawImage(vid, 0, 0, cv.width, cv.height);
-      const im = ctx.getImageData(0, 0, cv.width, cv.height), d = im.data;
-      for (let i = 0; i < d.length; i += 4) {
-        const m = Math.max(d[i], d[i + 2]), g = (d[i + 1] - m) / 255;
-        const a = g <= .1 ? 1 : g >= .3 ? 0 : 1 - (g - .1) / .2;
-        d[i + 1] = Math.min(d[i + 1], m + 8); d[i + 3] = a * 255;
-      }
-      ctx.putImageData(im, 0, 0);
-    }
-  }
-  const loop = () => { if (!playing) return; try { draw(); } catch (e) { stop(); failed = true; return; } requestAnimationFrame(loop); };
-  function stop() {
-    playing = false; clearTimeout(stopT);
-    cv.classList.remove("on");
-    try { vid.pause(); } catch (e) {}
+    ctx = cv.getContext("2d", { willReadFrequently: true });   // fallback without WebGL: key on the CPU at a smaller size
   }
   return {
-    unlock() {   // first tap: lets the clip start later on phones that require a gesture
+    fit(vw, vh) {
+      setup();
+      const s = Math.min(1, (gl ? 1280 : 360) / Math.max(vw, vh, 1));
+      const w = Math.max(2, Math.round(vw * s)), h = Math.max(2, Math.round(vh * s));
+      if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; }
+    },
+    draw(vid, tol) {
+      if (gl) {
+        const [lo, hi] = keyRange(tol);
+        gl.viewport(0, 0, cv.width, cv.height); gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.uniform2f(uK, lo, hi);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, vid);
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+      } else if (ctx) cpuKey(ctx, vid, cv.width, cv.height, tol);
+    },
+  };
+}
+/* Resolves true on the first of `evs`, false on error or after `ms`. */
+function mediaEvent(el, evs, ms) {
+  return new Promise(res => {
+    let t = 0;
+    const done = v => { clearTimeout(t); evs.forEach(e => el.removeEventListener(e, ok)); el.removeEventListener("error", bad); res(v); };
+    const ok = () => done(true), bad = () => done(false);
+    evs.forEach(e => el.addEventListener(e, ok)); el.addEventListener("error", bad);
+    t = setTimeout(() => done(false), ms);
+  });
+}
+const KNIFE = { src: "knife.mp4", start: 0, len: 5, tol: .5, place: "corner", sound: true };
+const KNIFE_THUMB = "data:image/webp;base64,UklGRlYRAABXRUJQVlA4WAoAAAAwAAAA5AAAtgAASUNDUMgBAAAAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADZBTFBIEAUAAAGggu2z6j46T1QZFJNCxaSYFEWVmbtw1UJUIaqwTKoQtRD1J4VqGQpRhaVSVCGqfJ7b3JyZe2b6mwUTERAl2wranHsbkBhMifLe+wX3v77m+Y/tY9sj7/dbx3u+KeN6ic+oZhv7fRPrju/5FPuOb3oLWRz4+8kwKj7AWcPwASxLQX4KY1gGGeSoXWNhdlvFDILFVnGWYJ5Zx/+FMVLT5jsAFeWbme1Xz+9EMRMFJ7WVKVM8ponqreswRQnbKH4HQGFAOJzWlXA0C5A6dk3/720Xg+twUgcfkwDYy5M6tRBtOrZPj+eDy8mVqGpgN8lNDBkDeVerqAvoQ0T+VuF/8h4C5nnyAxcV3pQYMskGvRiLpPmJppJm8pA+cESYmYz/42MIjLrK6Er/WIwhFKVBP7ka+7WBIm9+j16Oo9LQYR9GmUevR0MUVoNC3Z4xKAgyV18uCFmCqmIjDJcYK/KWGMwGhirpitBJvT5ApCOMJGmyCAUWVx0SfctYlTYtzRQHRSc5N7gMzECo701lwTXRECDKDo32c9wV/zbknI1Hi9NBTv0SOznlAEhDWT4pfBO+p5tXNyF8hdvYN/o9js+KAksf8xJfMWoOl3azPDMaz+h7D5jGed41Y0EHeGQawMzwR0bhd4piCJzb+5cxWESeCU8NXudZhB+FCbQpmVVpdBCqkjEdjSIDUcuZg21RAalHWRipcJ4vygbd9s71twPYtFHg1JS0w0xKuJ0SBVJVuZ23eCymgKqL7GvUuxnMowCrsmdrLckRnHAfcn6nEHcilKlX7sLoCxLIOpl2cu9933LBezm+tjEPUKt4tsbvTGnyXl6QZiXlBtdfDnBuP0HRIdeMCv8EctmrDrs2dvtIcvA1+aYYgDOTR/kxQtt+z4sZWpSPUZShh7JcHM2FIVXDImeL2tjD1ojLTOdcwZazIgTryjjkDpR3cVKvR20z8Z8VS1+g99lonbfA+6KPpm+hM4+DSaF7RkzvRu5KwDFCGfJyKIN5+3vVR9ZZ0Hzp4+v3BPKLjBK8L1K6uhx5TmnW9rfYS6qItDN0uaCrcHe+cWtqIq5ldnj7toWf8FJ6aYlwjdfdMh5n41B/mlyamJJ04/VNGR+Fy2ShMN1828DsciZaykI8AksillaWsZZCNpYIbYLcA8oR0WqvBJMBvkW2XaGrFakJAX9GKN/CGZqFh0C28iQIGZci32A820RfVUEd4TsWNouV8B466l6JZuI7VjJkJGfBoUfd2FCkceDQc46RVHEx06vSPFi8laJqCFdZoIzfUfE7+7HutqV7k8dV59wzMQN9KYlu9204XwqyMW0/pJcc29ZJOW8DxFrW4yyfniwG5G56hnGBJ8iUMP0lwc1gfmJEMsJ6HBpq0mlwfCsCM/hh4+MwdVHPgMbuMBVRHoEguLHxn+GjtlRC/CxpijBdaLjYyj36ATKlGRCYWRJeVorG37b84gykddJB1PIWVGVckBJNIYichgeep0eBEg7AAvczQY9E2H0vS3/zOyRSHoXQxbYmazLfYZSUx0GcrOTvBbYtqckxXq/gBrTSJcRNB1bjxFIutL4pdp15WNmWXtSgyVRl0XmBUw1GJ5TGQGWjSUWCsqpvKFC+EHURamPim1VRGhDJlgeyTQ2nr8q6G2e2dU/WR2H6pLdxgkfCBhqjTfRIacoo/Za0Syi9RtoXUXp/ahPDdEna3xrZ3Y3SM6W9CGdiaWMyMkCYI845B1ZQOCBQCgAAkDgAnQEq5QC3AD5tMpVIpCKiISbw2eiADYllbuFx4P6ffWyfq0c8fdWjr7gDnWf9d+x3vh/ze/CehX0on9/wVXsl/035CeddfObm7O5dYNHlAKvh43vbfuPRsexb0KykrjNjU/gRHuuPrQy6T+kJw2AnTXxFFAFjtpPfxkcO7UPGfrYpyr9D9I0wXaF/DxeiUku2PxbsymGIZhCll0s5etDbknI2VInCXzr0nCx4xpKvplL0x6n480gvu4kv4VHrg+ihg9ImFkz22hJ4H7TwPvLkZLbOMDxgMvr3RGX3PoQYaT+kNJatmNtEpe7OTjRHoeE/5AaVbDycoeRSXNjRnAItRDSf0hSHfhmccWDpTwzbL4Xf+zh9kblP3y2cNTKzgF/KkSNlKzL0cf0LCPnMsQ279uWY1yjJuvBizLbR2thhC/fD10X6Q0n8VZl7AJxoO0shoGjxXcQGeDAJXAF7sAk71HLKSiDY+NaT+kJwd/x9kmrAcBpTUhtXqOl4/R6oW21O1OXUHYBYX0kInqC8a6RtzUXlFZwFkk34j9QvteVDihSS9FA+VNN0ewOaqDgCyS0n9IZ9mvEu/WErtQ9wpvSE4+D2x5Fq2Z9wYsAA/v97qlt+437LjRzk3999Ux4IdJcshQTGXkCLhgvChssJSjR13BjXXggKIXe2m8d7y5O8m1NAvu6X75Nhv8cDfJo0pY/+c2HPEfg0E8O39BGcO5o2QKAGhyV5ODWFxeKFfwYvj42woRqwHqg9QdCLOzrIodsHRgQUqUN7yrxJRckqmLYO2eLGCifW7t3akQLaAr3Ou+2cVkT6CsDc3w/db5u3yb5+wyyJGESnlmoE7nqo1ek6jL/PYZtybKWTx/uYuVBs7M1OqA+o1ZndXyZObX125ySa8iEG3Ru4nhe6c/wcn/MLuuKPvbauCN4EvYAMLtzmNo4K0g1Su+HIi7nZ8XaZTDrUDI1KQ43C1IEAT9GLHw4ziBlHWPGcP2NRBhBpTJCOmX3ZnPIUZXHIwAdVvukOoQRbBTKjni24bNPFW0h4YF17QNrauMK4Q77eCUrvcldNp66z0Sn16RCS5ce7tcLXtyFywpWc+/5/4U4HdN79FeK/x8phSEZe/tAn7ftXAvplx6exQalvbD7EvwBipDcuLqUPcOsOQhvcEqLzKytt4kwx2TUQb2fU2pfwAIqM2bAwhmqPDan8tqsreY+p47bXI7TrNnGz0ukZUb1iWA60ixh9QtPNvRQjWyqOVdPGU937KG5u5kCMn2FUVrq7qxpYirpnr0XuGPFguo6eVDimzpVlSHcaYsywzEZQte8Uy5YKrf1Kehu0gRPYL3Yw9dB1f7e/ZA2Yj2oq98pZs/O5GuMM+ip6DbMqu4BpwAAFEBI3uy0NKiIP+wnu1WB3sVR0sl8Di69SXdkX/VDayw5mt9UyxaLxdGqWLIa/yayAFSM9GO0eQOrqp2mo9yHOZAU5/Sf39DL0Aso7iXtms0SJjkGEksgnRPWthzvp/mu5PsX2lCJvnpO73MTWh+CunmVGSUEi9X6LIkODR1UL3kLaItXajYV66xdTuvDYlQ7eK++bvkADq3SQGUfl5SrSWp+u8J6SL3TI7v1soVyUCLu9NXJ9bSxgfqqGJYVZK/VVCaMtaEsJ/GCU3mKFbKmz50Xqufq87ynNrMRX9t9OMrhcU7OjlX8E7JNcSjP24WdacfnIF872MBRbme2omZpQsT5XdpM4nwLecBaQIUZa+J2GlyIq+DEf8tcmTUKRLuDSIdMpvjZk+E1D/2O1etOE9nYCqDyTXPQBD/2EIUYn+5CKuiZwjk5/J1TGrKYF9c7VZWh/yML/k/pRaIT4B7ZN/wFnQzuyFoSghLtSQY3Zf7WVOk9k/+Gf1dpjng7OYZ1XJYIVrK2zXITGtEzlOjKiZAdaAjZlQ3lk2pteoAdbfD8RKRGSA+hj+GvGYFdKab+ISm4AdRemGqUnyrXEeRgwjsd/B3J8hI5wSHS3z6mejVoJW6W5qQ4s5KAxqpWSclC57QKSuWwHsFuVQNacoTzDjxhz+eKGPJr7ehzXKOtRasqZRRkSssdjlA2ofhApnxQyynbDnY2vYTanNjJBTN4iUgBhoSBqBZkA4nDJYzxBk4/OCZkEYvp81lfdRCYn5P4a/JoWZYkLdEDN2TEyePO1BRFM5LG+pc1TTGKFiqVAo+gqIEB2IGKSJj519fXajggk28ccwr+35AOuKjOM4b2tv5mEl1XDM8up+7MFEEBuhLbASjJsSZLmvnAPjVfWB7W7hzVC0dWeYcrtBwqgNr1qgpAMmfwjdaG19IQQirc1qlJM+fYZcUSPtZ1XHFOkxMkvtI6xcHyTblgYj6siwPsNHViw5i/0a+b6Ye3Cnc4f8csKULk73Su/E8GU/w6aVJYjdOCVUOnFCJWSMJKwnXKd0Q0+AZLdJit2ORXxBFgTjnxeUhHknSeRXaRxeUScjmoSieOwLFB90gZQiRIbQvJWm8c4Fizb8MSjMyJGKb2n1RrSKMRX8NOlRtdf3ZXYfuq0Y/lF2bi30uHc6hwyd82pi1UuckzPuwEIBnBdyo07+21FPBMcPenxyzSpvSE7WN9PEqTLnrnW5C/brkR2CqRHlClmtkC/dzvq+KgijhQe9xgTdrnUxs0iTGh5ixfjWfw5YFgH8GHg2Ywa1r7aDR3zkXS0/Frm0qSya10hjuB8lqQBI5r+jLXn1ShwM1hu/xwPSep3+tj8l+u/O/sKkzggH5k6V2sEBFAcgbiZlAlk+W5lljMCN2koNejrzqyXPTKKi0uxT0WNQ0TiWj5Mx4ZZeIxkAhQLEd7LLrApqyvk/ZsWGbvuMe0vqZ/EK/r2+GALfEm5fj6+PxYP7i8f5ftGKdxg16MzyVyNsHOSWWZBvE3WOH5sceagxHD8f9TmOsB8jNlisgkrlyQ531fELM4qS9pmMQc290wGgSkgtp+tg0dsavIP58PfEildwlwpLOKqf9FJa1wAP6rf4+sudBWgcGAiSKqPeS96oUp/R0P3gPH7e3WZUB5BBjeYsW0+sf0YRGIhjQ7BHq96IIHCUe8wTc4jjXdQhhsZ0AetVrBFl+Qai5imj0khIRvVVqJPAwMpLY5Z3c3Q5BcK6+4qMNKDjP5oWoYd5TL8eHffjzS+i7FWPQjDe73ZQgfDK3fwZ8MQnHBRrvPXlERRRx8ZHUwTAxezMmUIQs5t1Lbog6+2dONqjSNQZhDSN4Q7icvqJyv2HM+v3zoaOV+P9igN+wDcTIXi/4+FchmuDwXg17aC0fVXyw7GKiJKL7d7owsJbUGHeMDZzRrhCLt1JDx8N//qO9qBoF+D5VPswbSvTpy5tlgS2Rw1d7D6FENesKL9wgv1Igi8PD+QQWv3oF0zY1pCimkZHGPkyc/zGue3yrXrT80nv6RnBjdeT0QOLqO4fPaYXkqRuBjdQTBPlVQ/pp14E3/cqu5IrqqysS+gWYBIqWrzJYCSD1THivTGu+tyRNqfshP0Nj/b/9C5UO/nFgA0qwAA";   // a keyed frame of the clip, for the collection
+const CLIP_MAX = 5;
+/* One video element for every clip: phones unlock it once, on the first tap, and it keeps playing whatever it is given. */
+const clip = (() => {
+  const vid = $("clipVid"), cv = $("clip"), kd = keyDrawer(cv);
+  let playing = false, unlocked = false, stopT = 0, end = 0, tol = .5, token = 0, cur = KNIFE.src;
+  function load(src) {
+    if (cur !== src) { cur = src; vid.src = src; vid.load(); }
+    if (vid.readyState >= 2) return Promise.resolve(true);
+    if (vid.error) { vid.load(); }
+    return mediaEvent(vid, ["loadeddata"], 2500);
+  }
+  const loop = () => {
+    if (!playing) return;
+    try { kd.draw(vid, tol); } catch (e) { stop(); return; }
+    const left = end - vid.currentTime;
+    if (left <= 0) { stop(); return; }
+    if (left < .3) try { vid.volume = .9 * left / .3; } catch (e) {}   // a short fade instead of a hard cut at 5 s
+    requestAnimationFrame(loop);
+  };
+  function stop() {
+    if (!playing) return;
+    playing = false; token++; clearTimeout(stopT);
+    cv.classList.remove("on");
+    try { vid.pause(); } catch (e) {}
+    if (cur !== KNIFE.src) setTimeout(() => { if (!playing && cur !== KNIFE.src) { cur = KNIFE.src; vid.src = KNIFE.src; vid.load(); } }, 400);   // back to the knife, ready for its turn
+  }
+  return {
+    unlock() {   // first tap: lets clips start later on phones that require a gesture
       if (unlocked) return; unlocked = true;
       const p = vid.play(); if (p && p.then) p.then(() => { vid.pause(); vid.currentTime = 0; }).catch(() => {});
     },
-    play() {
-      if (playing || failed || vid.readyState < 2) return false;
-      setup();
-      const w = gl ? (vid.videoWidth || 720) : 360, h = gl ? (vid.videoHeight || 540) : 270;
-      if (cv.width !== w) { cv.width = w; cv.height = h; }
-      playing = true;
-      vid.currentTime = 0; vid.volume = .9; vid.muted = !fxSet.sound;
-      const go = () => { cv.classList.add("on"); loop(); };
-      const p = vid.play();
-      if (p && p.then) p.then(go).catch(() => { vid.muted = true; vid.play().then(go).catch(() => { stop(); }); });
-      else go();
+    async play(spec) {
+      if (playing || !motionOn()) return false;
+      playing = true; const my = ++token;
+      const fail = () => { if (my === token) { playing = false; token++; } return false; };
+      if (!await load(spec.src) || my !== token) return fail();
+      kd.fit(vid.videoWidth || 720, vid.videoHeight || 540);
+      cv.dataset.place = spec.place || "full";
+      tol = spec.tol == null ? .5 : spec.tol;
+      const start = spec.start || 0;
+      if (Math.abs(vid.currentTime - start) > .04) { vid.currentTime = start; await mediaEvent(vid, ["seeked"], 900); if (my !== token) return false; }
+      end = start + Math.min(spec.len || CLIP_MAX, CLIP_MAX);
+      try { vid.volume = .9; } catch (e) {}
+      vid.muted = !(fxSet.sound && spec.sound !== false);
+      try { await vid.play(); } catch (e) {
+        vid.muted = true;   // sound refused: play it silent rather than not at all
+        try { await vid.play(); } catch (e2) { return fail(); }
+      }
+      if (my !== token) return false;
+      cv.classList.add("on"); loop();
       vid.onended = stop;
-      stopT = setTimeout(stop, 5600);
+      stopT = setTimeout(stop, (end - start) * 1000 + 800);
       return true;
     },
+    stop,
   };
 })();
 
 /* ACE banner, after Valorant's kill banner: a ring emblem at the bottom centre, one kill segment per ace, then ACE. */
-function aceHTML() {
+function aceSVG(done) {   // done: every segment lit and the A in the ring, as the banner ends (the collection's thumbnail)
   const P = (a, r) => [Math.cos(a * Math.PI / 180) * r, Math.sin(a * Math.PI / 180) * r];
   const arc = (a0, a1, r) => { const [x0, y0] = P(a0, r), [x1, y1] = P(a1, r); return `M${x0.toFixed(1)},${y0.toFixed(1)}A${r},${r} 0 0 1 ${x1.toFixed(1)},${y1.toFixed(1)}`; };
-  const segs = [0, 1, 2, 3, 4].map(k => { const a = -126 + k * 15; return `<path class="seg" d="${arc(a, a + 12, 58)}"/>`; }).join("");
+  const segs = [0, 1, 2, 3, 4].map(k => { const a = -126 + k * 15; return `<path class="seg${done ? " lit" : ""}" d="${arc(a, a + 12, 58)}"/>`; }).join("");
   const outer = [[20, 70], [110, 160], [200, 250], [290, 340]].map(([a, b]) => `<path d="${arc(a, b, 79)}"/>`).join("");
   const diag = [45, 135, 225, 315].map(a => { const [x0, y0] = P(a, 86), [x1, y1] = P(a, 97); return `<path d="M${x0.toFixed(1)},${y0.toFixed(1)}L${x1.toFixed(1)},${y1.toFixed(1)}"/>`; }).join("");
   const chev = sd => `<path d="M${sd * 60},-6L${sd * 66},0L${sd * 60},6M${sd * 66},-6L${sd * 72},0L${sd * 66},6M${sd * 78},0H${sd * 98}"/>`;
-  const svg = `<svg viewBox="-100 -100 200 200" aria-hidden="true">`
+  return `<svg viewBox="-100 -100 200 200" aria-hidden="true">`
     + `<g class="hud">${outer}${diag}<path d="M0,-99V-84M-6,-91H6"/>${chev(-1)}${chev(1)}`
     + `<path d="M0,53V61M0,61L5,67L0,73L-5,67ZM0,69L5,75L0,81L-5,75ZM-3,86V98M3,86V98"/></g>`
-    + `${segs}<circle class="ring" r="46"/><text class="glyph" x="0" y="2">♠</text></svg>`;
+    + `${segs}<circle class="ring" r="46"/>${done ? `<text class="glyph big" x="0" y="2">A</text>` : `<text class="glyph" x="0" y="2">♠</text>`}</svg>`;
+}
+function aceHTML() {
+  const svg = aceSVG(false);
   return `<div class="ace-wrap"><div class="ace-title"><span class="ace-streak l"></span><div class="ace-word">ACE</div><span class="ace-streak r"></span></div>`
     + `<div class="ace-emb">${svg}<div class="ace-flash"></div><div class="ace-wave"></div></div></div>`;
 }
@@ -2582,7 +2746,7 @@ function aceBanner() {
   }, t0 + k * step));
   const T = t0 + 4 * step + 120;
   setTimeout(() => {
-    glyph.textContent = "A"; glyph.classList.remove("red"); glyph.classList.add("ace");
+    glyph.textContent = "A"; glyph.classList.remove("red"); glyph.classList.add("big");   // not "ace": that class is the hidden overlay
     beat(4, true); sfx.ace(); flash("white", .45, 380); shake(.4, 460); buzz([30, 30, 70]); party(2200);
     q(".ace-wave").animate([{ opacity: .95, transform: "translate(-50%,-50%) scale(.8)" }, { opacity: 0, transform: "translate(-50%,-50%) scale(3.4)" }], { duration: 760, easing: "cubic-bezier(.1,.7,.3,1)" });
     q(".ace-word").animate([{ opacity: 0, transform: "translateY(14px) scale(1.25)", letterSpacing: ".55em" }, { opacity: 1, transform: "none", letterSpacing: ".1em" }], { duration: 360, easing: "cubic-bezier(.2,.9,.3,1)", ...both });
@@ -2596,20 +2760,302 @@ function aceBanner() {
   out.onfinish = done;
   setTimeout(() => { if (aceBusy) done(); }, T + 2500);
 }
-/* Win animations take turns: drift, knife, ace, drift… */
-const WIN_ANIMS = ["drift", "knife", "ace"];
-let winIdx = (() => { try { return (+localStorage.getItem("sabot.winfx")) || 0; } catch (e) { return 0; } })();
+/* ---------- Win animations: the player's collection (built in, plus their own green-screen videos) ---------- */
+const BUILTIN_ANIMS = [
+  { id: "drift", name: "Drift", sub: "La Mercedes fait un donut sur le tapis" },
+  { id: "knife", name: "Couteau papillon", sub: "Inspection façon CS, fond vert détouré" },
+  { id: "ace", name: "ACE", sub: "La bannière de Valorant, avec les quatre as" },
+];
+const ANIM_KEY = "sabot.anims";
+const animPrefs = (() => {
+  const d = { off: [], order: "turns", last: "" };
+  try { Object.assign(d, JSON.parse(localStorage.getItem(ANIM_KEY) || "{}")); } catch (e) {}
+  if (!Array.isArray(d.off)) d.off = [];
+  if (!d.last) try { const n = +localStorage.getItem("sabot.winfx"); if (n > 0) d.last = ["drift", "knife", "ace"][(n - 1) % 3]; } catch (e) {}   // the old rotation only kept a counter
+  return d;
+})();
+const saveAnimPrefs = () => { try { localStorage.setItem(ANIM_KEY, JSON.stringify(animPrefs)); } catch (e) {} };
+let customs = [];   // {id, name, blob, start, len, tol, place, sound, w, h, thumb, created, temp?}
+const animIds = () => [...BUILTIN_ANIMS.map(a => a.id), ...customs.map(c => c.id)];
+const animOn = id => !animPrefs.off.includes(id);
+const enabledAnims = () => animIds().filter(animOn);
+/* Only the animations switched on take turns (or come at random, without repeating the last one). */
 function nextWinAnim() {
-  const name = WIN_ANIMS[winIdx % WIN_ANIMS.length];
-  winIdx = (winIdx + 1) % 999; try { localStorage.setItem("sabot.winfx", String(winIdx)); } catch (e) {}
-  return name;
+  const on = enabledAnims();
+  if (!on.length) return null;
+  let pick = on[0];
+  if (animPrefs.order === "random") {
+    const pool = on.length > 1 ? on.filter(id => id !== animPrefs.last) : on;
+    pick = pool[Math.floor(Math.random() * pool.length)];
+  } else {
+    const all = animIds(), i = all.indexOf(animPrefs.last);
+    for (let k = 1; k <= all.length; k++) { const id = all[(i + k + all.length) % all.length]; if (animOn(id)) { pick = id; break; } }
+  }
+  animPrefs.last = pick; saveAnimPrefs();
+  return pick;
+}
+const clipURLs = new Map();
+function customSpec(id) {
+  const c = customs.find(x => x.id === id);
+  if (!c) return null;
+  if (!clipURLs.has(id)) clipURLs.set(id, URL.createObjectURL(c.blob));
+  return { src: clipURLs.get(id), start: c.start, len: c.len, tol: c.tol, place: c.place, sound: c.sound };
 }
 function playWinAnim(name) {
-  if (!motionOn()) return;
-  if (name === "knife" && knife.play()) return;
+  if (!name || !motionOn()) return;
   if (name === "ace") { aceBanner(); return; }
-  drift();   // drift, or the knife clip is not ready
+  if (name === "drift") { drift(); return; }
+  const spec = name === "knife" ? KNIFE : customSpec(name);
+  if (spec) clip.play(spec).then(ok => { if (!ok && animOn("drift")) drift(); });   // clip not ready: the car takes its turn
 }
+
+/* Imported videos stay in this browser (IndexedDB); nothing is sent anywhere. */
+const animDB = (() => {
+  let p = null;
+  const open = () => p || (p = new Promise((res, rej) => {
+    let r;
+    try { r = indexedDB.open("sabot", 1); } catch (e) { rej(e); return; }
+    r.onupgradeneeded = () => { if (!r.result.objectStoreNames.contains("anims")) r.result.createObjectStore("anims", { keyPath: "id" }); };
+    r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); r.onblocked = () => rej(new Error("blocked"));
+  }));
+  const run = (mode, fn) => open().then(d => new Promise((res, rej) => {
+    const t = d.transaction("anims", mode), q = fn(t.objectStore("anims"));
+    t.oncomplete = () => res(q.result); t.onerror = t.onabort = () => rej(t.error);
+  }));
+  return { all: () => run("readonly", s => s.getAll()), put: rec => run("readwrite", s => s.put(rec)), del: id => run("readwrite", s => s.delete(id)) };
+})();
+
+/* ---------- The collection sheet: switch each animation on or off, try it, import a clip ---------- */
+const store = (() => {
+  const el = $("store"), scrim = $("storeScrim"), file = $("animFile");
+  const MAX_MB = 50;
+  let isOpen = false, view = "grid", from = null, armed = "", armT = 0, fresh = "";
+  let imp = null;   // the clip being imported
+  const sec = n => n.toFixed(1).replace(".", ",") + " s";
+  const tolWord = t => t < .3 ? "doux" : t > .7 ? "fort" : "normal";
+  const art = {
+    drift: () => `<div class="art-drift"><svg class="art-skid" viewBox="0 0 160 100" preserveAspectRatio="none" aria-hidden="true"><path d="M14 80C46 94 96 90 120 70S142 22 108 20 62 40 76 60"/><path d="M8 70C42 86 92 82 114 62S134 30 104 28 70 44 82 58"/></svg><img src="${CAR_SRC}" alt=""></div>`,
+    knife: () => `<img class="art-clip" src="${KNIFE_THUMB}" alt="">`,
+    ace: () => `<div class="ace-emb art-ace">${aceSVG(true)}</div>`,
+  };
+  function cardHTML(a, own) {
+    const on = animOn(a.id), del = armed === a.id;
+    const pic = own ? (a.thumb ? `<img class="art-clip" src="${a.thumb}" alt="">` : `<span class="art-none" aria-hidden="true">▶</span>`) : art[a.id]();
+    const sub = own ? `Vidéo de ${sec(a.len)}${a.temp ? ", pour cette session" : ""}` : a.sub;
+    return `<article class="anim-card${on ? " on" : ""}${fresh === a.id ? " fresh" : ""}">`
+      + `<div class="anim-art">${pic}<span class="anim-badge">${own ? "Importée" : "Intégrée"}</span></div>`
+      + `<div class="anim-meta"><div class="anim-txt"><b>${esc(a.name)}</b><small>${esc(sub)}</small></div>`
+      + `<input type="checkbox" class="switch" data-anim="${a.id}" aria-label="${esc(a.name)}"${on ? " checked" : ""}></div>`
+      + `<div class="anim-actions"><button class="btn sm" data-st="try" data-id="${a.id}"><svg viewBox="0 0 10 10" width="9" height="9" aria-hidden="true"><path d="M2 1l7 4-7 4z" fill="currentColor"/></svg>Essayer</button>`
+      + (own ? `<button class="btn sm ghost${del ? " danger" : ""}" data-st="del" data-id="${a.id}">${del ? "Confirmer" : "Supprimer"}</button>` : "")
+      + `</div></article>`;
+  }
+  const countHTML = () => `<b>${enabledAnims().length}</b>/${animIds().length} actives`;
+  function gridHTML() {
+    return `<header class="store-head"><div><p class="store-kick">Collection</p><h2 id="storeTitle">Animations de victoire</h2></div>`
+      + `<span class="store-count" id="storeCount">${countHTML()}</span><button class="adv-x" data-st="close" aria-label="Fermer">×</button></header>`
+      + `<div class="store-body"><div class="anim-grid">`
+      + BUILTIN_ANIMS.map(a => cardHTML(a, false)).join("") + customs.map(c => cardHTML(c, true)).join("")
+      + `<button class="anim-card anim-add" data-st="pick"><span class="add-plus" aria-hidden="true">+</span><b>Importer une vidéo</b><small>Fond vert, ${CLIP_MAX} s max</small></button>`
+      + `</div><p class="store-none" id="storeNone"${enabledAnims().length ? " hidden" : ""}>Aucune animation active : les victoires gardent les confettis et les lumières.</p>`
+      + `<div class="store-foot"><span>Ordre</span><div class="seg-ctl" role="group" aria-label="Ordre des animations">`
+      + [["turns", "À tour de rôle"], ["random", "Au hasard"]].map(([v, l]) => `<button data-st="order" data-v="${v}" aria-pressed="${animPrefs.order === v}">${l}</button>`).join("")
+      + `</div></div><p class="store-note">Vos vidéos restent sur cet appareil.</p></div>`;
+  }
+  function importHTML() {
+    const places = [["full", "Plein écran"], ["center", "Centre"], ["corner", "Coin"]];
+    return `<header class="store-head"><button class="adv-x" data-st="back" aria-label="Retour à la collection">‹</button><div><p class="store-kick">Nouvelle animation</p><h2 id="storeTitle">Importer une vidéo</h2></div>`
+      + `<button class="adv-x" data-st="close" aria-label="Fermer">×</button></header>`
+      + `<div class="store-body imp">`
+      + `<div class="imp-stage" id="impStage" data-place="${imp.place}"><canvas id="impCv"></canvas><p class="imp-load" id="impLoad">Lecture de la vidéo…</p></div>`
+      + `<p class="imp-warn" id="impWarn" hidden></p>`
+      + `<label class="imp-field"><span>Nom</span><input id="impName" maxlength="24" autocomplete="off" spellcheck="false" value="${esc(imp.name)}"></label>`
+      + `<div class="imp-field" id="impTrim" hidden><span>Extrait <em id="impTrimV"></em></span><input type="range" id="impStart" min="0" max="0" step="0.1" value="0" aria-label="Début de l'extrait"></div>`
+      + `<div class="imp-field"><span>Détourage <em id="impTolV">${tolWord(imp.tol)}</em></span><input type="range" id="impTol" min="0" max="100" step="1" value="${Math.round(imp.tol * 100)}" aria-label="Force du détourage"><span class="imp-ends"><small>Doux</small><small>Fort</small></span></div>`
+      + `<div class="imp-field"><span>Position</span><div class="seg-ctl" role="group" aria-label="Position à l'écran">${places.map(([v, l]) => `<button data-st="place" data-v="${v}" aria-pressed="${imp.place === v}">${l}</button>`).join("")}</div></div>`
+      + `<label class="set-row"><span><b>Son de la vidéo</b><small>Joué si le son du jeu est actif.</small></span><input type="checkbox" class="switch" id="impSound"${imp.sound ? " checked" : ""}></label>`
+      + `<div class="imp-actions"><button class="btn ghost" data-st="pick">Changer de vidéo</button><button class="btn primary" data-st="save" id="impSave" disabled>Ajouter à ma collection</button></div>`
+      + `</div>`;
+  }
+  function render() {
+    el.dataset.view = view;
+    el.innerHTML = view === "import" && imp ? importHTML() : gridHTML();
+    if (view === "import" && imp) { imp.kd = keyDrawer($("impCv")); $("impStage").style.setProperty("--ar", Math.max(.5, Math.min(2, innerWidth / innerHeight)).toFixed(3)); }
+  }
+  function open() {
+    if (isOpen) return;
+    isOpen = true; view = "grid"; from = document.activeElement;
+    el.hidden = false; scrim.hidden = false; document.documentElement.classList.add("store-open");
+    render();
+    const x = el.querySelector('[data-st="close"]'); if (x) x.focus({ preventScroll: true });
+    try { localStorage.setItem("sabot.animsSeen", "1"); } catch (e) {}
+    $("animDot").hidden = true; $("animBtn").setAttribute("aria-pressed", "true");
+    sfx.whoosh();
+  }
+  function close() {
+    if (!isOpen) return;
+    endImport(); isOpen = false; armed = ""; fresh = "";
+    el.hidden = true; scrim.hidden = true; el.innerHTML = ""; document.documentElement.classList.remove("store-open");
+    $("animBtn").setAttribute("aria-pressed", "false");
+    if (from && from.focus && document.contains(from)) try { from.focus({ preventScroll: true }); } catch (e) {}
+  }
+  function endImport() {
+    if (!imp) return;
+    cancelAnimationFrame(imp.raf);
+    try { imp.v.pause(); imp.v.removeAttribute("src"); imp.v.load(); } catch (e) {}
+    URL.revokeObjectURL(imp.url); imp = null;
+  }
+  const warn = msg => { const w = $("impWarn"); if (w) { w.textContent = msg; w.hidden = !msg; } };
+  function startImport(f) {
+    if (!/^video\//.test(f.type) && !/\.(mp4|m4v|mov|webm)$/i.test(f.name)) { toast("Ce fichier n'est pas une vidéo."); return; }
+    if (f.size > MAX_MB * 1048576) { toast(`Vidéo trop lourde (${Math.round(f.size / 1048576)} Mo) : ${MAX_MB} Mo maximum.`); return; }
+    endImport();
+    const name = f.name.replace(/\.[^.]+$/, "").replace(/[_-]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 24) || "Ma vidéo";
+    imp = { file: f, url: URL.createObjectURL(f), v: $("pvVid"), start: 0, len: CLIP_MAX, tol: .5, place: "full", sound: true, name, ready: false, checked: false, raf: 0, kick: 0 };
+    view = "import"; render();
+    const v = imp.v, job = imp;
+    v.muted = true; v.playsInline = true; v.src = job.url; v.load();
+    mediaEvent(v, ["loadeddata"], 10000).then(ok => {
+      if (imp !== job) return;
+      const d = v.duration;
+      if (!ok || !v.videoWidth) { $("impLoad").textContent = "Cette vidéo ne se lit pas dans le navigateur. Essayez un MP4 (H.264) ou un WebM."; return; }
+      if (isFinite(d) && d < .3) { $("impLoad").textContent = "Vidéo trop courte."; return; }
+      job.len = isFinite(d) ? Math.min(CLIP_MAX, d) : CLIP_MAX;
+      if (isFinite(d) && d > CLIP_MAX + .05) {   // longer than 5 s: the player picks which 5 seconds to keep
+        const r = $("impStart"); r.max = (d - CLIP_MAX).toFixed(1); $("impTrim").hidden = false;
+        warn(""); trimLabel();
+      }
+      job.kd.fit(v.videoWidth, v.videoHeight);
+      $("impLoad").hidden = true; $("impSave").disabled = false; job.ready = true;
+      v.currentTime = 0; v.play().catch(() => {});
+      loop();
+    });
+  }
+  const trimLabel = () => { const t = $("impTrimV"); if (t && imp) t.textContent = `de ${sec(imp.start)} à ${sec(imp.start + imp.len)}`; };
+  function loop() {
+    if (!imp) return;
+    const v = imp.v;
+    if (v.currentTime >= imp.start + imp.len - .03 || v.ended) { v.currentTime = imp.start; if (v.paused) v.play().catch(() => {}); }
+    else if (v.paused && performance.now() > imp.kick) { imp.kick = performance.now() + 1000; v.play().catch(() => {}); }   // a refused start is retried
+    if (v.readyState >= 2) try { imp.kd.draw(v, imp.tol); } catch (e) {}
+    if (!imp.checked && v.currentTime > imp.start + .4) { imp.checked = true; checkGreen(); }
+    imp.raf = requestAnimationFrame(loop);
+  }
+  function checkGreen() {   // the border of the frame should be mostly green screen
+    try {
+      const W = 48, H = 27, c = document.createElement("canvas"); c.width = W; c.height = H;
+      const x = c.getContext("2d", { willReadFrequently: true }); x.drawImage(imp.v, 0, 0, W, H);
+      const d = x.getImageData(0, 0, W, H).data; let sum = 0, n = 0;
+      for (let y = 0; y < H; y++) for (let i = 0; i < W; i++) {
+        if (y > 2 && y < H - 3 && i > 2 && i < W - 3) continue;
+        const k = (y * W + i) * 4; sum += Math.max(0, d[k + 1] - Math.max(d[k], d[k + 2])); n++;
+      }
+      if (sum / n / 255 < .12) warn("Le fond ne semble pas vert : le décor risque de rester visible.");
+    } catch (e) {}
+  }
+  async function thumbOf(job) {   // a keyed frame from the middle of the clip, cropped to what is left
+    const v = job.v;
+    try {
+      v.pause(); v.currentTime = job.start + job.len * .45; await mediaEvent(v, ["seeked"], 1500);
+      const W = 320, H = Math.max(2, Math.round(W * v.videoHeight / v.videoWidth));
+      const c = document.createElement("canvas"); c.width = W; c.height = H;
+      const x = c.getContext("2d", { willReadFrequently: true }); cpuKey(x, v, W, H, job.tol);
+      const d = x.getImageData(0, 0, W, H).data; let x0 = W, y0 = H, x1 = -1, y1 = -1;
+      for (let y = 0; y < H; y++) for (let i = 0; i < W; i++) if (d[(y * W + i) * 4 + 3] > 60) { if (i < x0) x0 = i; if (i > x1) x1 = i; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+      if (x1 < 0) return "";
+      x0 = Math.max(0, x0 - 6); y0 = Math.max(0, y0 - 6); x1 = Math.min(W - 1, x1 + 6); y1 = Math.min(H - 1, y1 + 6);
+      const o = document.createElement("canvas"); o.width = x1 - x0 + 1; o.height = y1 - y0 + 1;
+      o.getContext("2d").drawImage(c, x0, y0, o.width, o.height, 0, 0, o.width, o.height);
+      return o.toDataURL("image/webp", .85);
+    } catch (e) { return ""; }
+  }
+  async function save() {
+    const job = imp;
+    if (!job || !job.ready || job.saving) return;
+    job.saving = true;
+    const b = $("impSave"); b.disabled = true; b.textContent = "Ajout…";
+    const name = ($("impName").value.trim() || job.name).slice(0, 24);
+    cancelAnimationFrame(job.raf);
+    const thumb = await thumbOf(job);
+    const rec = { id: "v" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), name, blob: job.file, start: +job.start.toFixed(2), len: +job.len.toFixed(2),
+      tol: job.tol, place: job.place, sound: job.sound, w: job.v.videoWidth, h: job.v.videoHeight, thumb, created: Date.now() };
+    try { await animDB.put(rec); } catch (e) { rec.temp = true; }
+    customs.push(rec); animPrefs.off = animPrefs.off.filter(x => x !== rec.id); saveAnimPrefs();
+    if (imp !== job) return;   // sheet closed meanwhile: the clip is kept all the same
+    fresh = rec.id; endImport(); view = "grid"; render();
+    toast(rec.temp ? `« ${name} » est ajoutée pour cette session : ce navigateur ne garde pas les vidéos.` : `« ${name} » rejoint vos animations.`);
+    sfx.chips(5); buzz([12, 40, 20]);
+    const card = el.querySelector(".anim-card.fresh");
+    if (card) { card.scrollIntoView({ block: "nearest", behavior: "smooth" }); setTimeout(() => { const c = mid(card); fx.burst(c.x, c.y, { count: 40, spread: 360, power: .8 }); }, 120); }
+  }
+  function tryAnim(id) {
+    if (!fxSet.effects) { toast("Activez les effets visuels dans les réglages pour voir les animations."); return; }
+    if (reduceMotion.matches) { toast("Votre appareil demande moins d'animations : elles restent coupées."); return; }
+    close();
+    setTimeout(() => {
+      if (id === "drift" || id === "ace") { playWinAnim(id); return; }
+      const spec = id === "knife" ? KNIFE : customSpec(id);
+      if (spec) clip.play(spec).then(ok => { if (!ok) toast("Cette vidéo ne peut pas être lue pour le moment."); });
+    }, 300);
+  }
+  function del(id) {
+    if (armed !== id) {
+      armed = id; clearTimeout(armT);
+      armT = setTimeout(() => { armed = ""; if (isOpen && view === "grid") render(); }, 3500);
+      render(); return;
+    }
+    armed = ""; clearTimeout(armT);
+    customs = customs.filter(c => c.id !== id);
+    animPrefs.off = animPrefs.off.filter(x => x !== id); saveAnimPrefs();
+    const u = clipURLs.get(id); if (u) { clipURLs.delete(id); setTimeout(() => URL.revokeObjectURL(u), 8000); }
+    animDB.del(id).catch(() => {});
+    render(); sfx.whoosh();
+  }
+  const press = b => b.parentNode.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+  el.addEventListener("click", e => {
+    const b = e.target.closest("[data-st]");
+    if (!b) return;
+    const a = b.dataset.st, id = b.dataset.id;
+    if (a === "close") close();
+    else if (a === "pick") file.click();
+    else if (a === "back") { endImport(); view = "grid"; render(); }
+    else if (a === "save") save();
+    else if (a === "try") tryAnim(id);
+    else if (a === "del") del(id);
+    else if (a === "order") { animPrefs.order = b.dataset.v; saveAnimPrefs(); press(b); sfx.tap(); }
+    else if (a === "place" && imp) { imp.place = b.dataset.v; $("impStage").dataset.place = imp.place; press(b); sfx.tap(); }
+  });
+  el.addEventListener("change", e => {
+    const t = e.target;
+    if (t.dataset.anim) {
+      const id = t.dataset.anim;
+      animPrefs.off = animPrefs.off.filter(x => x !== id); if (!t.checked) animPrefs.off.push(id);
+      saveAnimPrefs();
+      const card = t.closest(".anim-card"); card.classList.toggle("on", t.checked);
+      $("storeCount").innerHTML = countHTML(); $("storeNone").hidden = enabledAnims().length > 0;
+      sfx.tap(); buzz(8);
+      if (t.checked) pop(card.querySelector(".anim-art"), 1.05, 260);
+    } else if (t.id === "impSound" && imp) imp.sound = t.checked;
+  });
+  el.addEventListener("input", e => {
+    const t = e.target;
+    if (!imp) return;
+    if (t.id === "impTol") { imp.tol = +t.value / 100; $("impTolV").textContent = tolWord(imp.tol); }
+    else if (t.id === "impStart") { imp.start = +t.value; imp.v.currentTime = imp.start; trimLabel(); }
+  });
+  file.addEventListener("change", () => { const f = file.files && file.files[0]; file.value = ""; if (f) startImport(f); });
+  const hasFiles = e => e.dataTransfer && [...(e.dataTransfer.types || [])].includes("Files");
+  el.addEventListener("dragover", e => { if (hasFiles(e)) { e.preventDefault(); el.classList.add("drag"); } });
+  el.addEventListener("dragleave", e => { if (!el.contains(e.relatedTarget)) el.classList.remove("drag"); });
+  el.addEventListener("drop", e => { if (!hasFiles(e)) return; e.preventDefault(); el.classList.remove("drag"); const f = e.dataTransfer.files[0]; if (f) startImport(f); });
+  scrim.addEventListener("click", close);
+  try { $("animDot").hidden = !!localStorage.getItem("sabot.animsSeen"); } catch (e) { $("animDot").hidden = false; }
+  animDB.all().then(list => {
+    customs = (list || []).filter(c => c && c.blob).sort((a, b) => a.created - b.created);
+    if (isOpen && view === "grid") render();
+  }).catch(() => {});
+  return { open, close, get isOpen() { return isOpen; } };
+})();
 
 let shownRound = null;
 const last = {};
@@ -2685,6 +3131,7 @@ document.addEventListener("click", e => {
   if (a === "level") { toast(`Niveau ${xp.lvl} · ${xp.xp} / ${xpNeed(xp.lvl)} XP. Chaque main en rapporte, les victoires et les blackjacks davantage.`); pop($("lvl"), 1.2, 300); return; }
   if (a === "advisor") return setAdvisor(!advOpen);
   if (a === "info") return setInfo(!infoOpen);
+  if (a === "anims") { if (infoOpen) setInfo(false); if (advOpen && phoneUI()) setAdvisor(false); store.open(); return; }
   if (a === "infotab") { infoTab = arg; render(); return; }
   if (a === "closesheets") { infoOpen = false; return setAdvisor(false); }
   if (a === "advtab") { advTabPinned = arg; render(); return; }
@@ -2700,6 +3147,7 @@ document.addEventListener("click", e => {
   act(a);
 });
 document.addEventListener("keydown", e => {
+  if (store.isOpen) { if (e.key === "Escape") { e.preventDefault(); store.close(); } return; }
   if (!state || e.metaKey || e.ctrlKey || e.altKey || e.repeat) return;
   if (e.target.closest && e.target.closest("input,textarea,select")) return;
   const k = e.key.toLowerCase();
