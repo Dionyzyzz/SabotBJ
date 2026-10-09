@@ -462,6 +462,7 @@ body.no-fx .beams{opacity:0!important;animation:none!important}
 .shoe-mouth{position:absolute;right:-4%;top:30%;width:30%;height:36%;border-radius:3px;transform:rotate(14deg) skewX(-10deg);
   background:repeating-linear-gradient(45deg,var(--felt-lo) 0 3px,var(--felt-hi) 3px 6px);box-shadow:0 0 0 2px var(--card),0 3px 6px rgba(0,0,0,.5)}
 .card.ghost{pointer-events:none}
+.sweep-layer{position:absolute;inset:0;pointer-events:none;z-index:4}
 .gcard{position:absolute;will-change:transform,opacity;pointer-events:none}
 .gflip{position:absolute;inset:0;transform-style:preserve-3d}
 .gflip>.card{position:absolute;inset:0;width:100%;margin:0;-webkit-backface-visibility:hidden;backface-visibility:hidden}
@@ -794,6 +795,7 @@ body.no-fx .ace{display:none!important}
       <text class="l2"><textPath href="#arc2" startOffset="50%" text-anchor="middle">LA BANQUE TIRE À 16 ET RESTE À 17</textPath></text>
     </svg>
     <div class="seats" id="seats"></div>
+    <div class="sweep-layer" id="sweepLayer" aria-hidden="true"></div>
   </section>
   </div></div></div>
 
@@ -2353,18 +2355,23 @@ function sweepPlan(n) {
   const land = (n - 1) * stag + FLIP + SLIDE, sq = land + 40, up = sq + 120, go = up + 110, drop = go + 400, end = drop + 220;
   return { stag, FLIP, SLIDE, land, sq, up, go, drop, end, hold: land };
 }
+/* Center and size of an element in the table's own layout pixels (what the sweep layer uses), whatever the camera is doing. */
+function tableXY() {
+  const L = $("sweepLayer"), R = L.getBoundingClientRect(), k = R.width / L.offsetWidth || 1;
+  return el => { const r = el.getBoundingClientRect(); return { x: (r.left + r.width / 2 - R.left) / k, y: (r.top + r.height / 2 - R.top) / k, rw: r.width / k, rh: r.height / k }; };
+}
 function flyToTray(ghosts) {
-  const pile = $("trayPile"), P = pile.getBoundingClientRect(), T = { x: P.left + P.width / 2, y: P.top + P.height / 2 }, ov = $("overlay");
-  const dz = document.querySelector("#dealer .cards") || $("dealer"), D = dz.getBoundingClientRect();
-  const G = { x: D.left + D.width / 2 - D.width * .18, y: D.top + D.height / 2 };   // in front of the dealer, a little toward the tray
+  const at = tableXY(), ov = $("sweepLayer"), P = at($("trayPile")), T = { x: P.x, y: P.y };
+  const D = at(document.querySelector("#dealer .cards") || $("dealer"));
+  const G = { x: D.x - D.rw * .18, y: D.y };   // in front of the dealer, a little toward the tray
   const isDealer = g => g.dealer;
-  const list = [...ghosts.filter(g => !isDealer(g)).sort((a, b) => b.r.left - a.r.left), ...ghosts.filter(isDealer)].slice(-24);
-  const n = list.length, pl = sweepPlan(n), W = Math.max(...list.map(g => g.w || g.r.width));
-  const sc = Math.min(1.5, Math.max(.2, P.width / (W * 1.4)));   // in the tray the pile lies lengthwise, the size of the pile
+  const list = [...ghosts.filter(g => !isDealer(g)).sort((a, b) => b.x - a.x), ...ghosts.filter(isDealer)].slice(-24);
+  const n = list.length, pl = sweepPlan(n), W = Math.max(...list.map(g => g.w));
+  const sc = Math.min(1.5, Math.max(.2, P.rw / (W * 1.4)));   // in the tray the pile lies lengthwise, the size of the pile
   pileFrozen = true; sweepEnd = Date.now() + pl.end;
   const tf = (x, y, r, ry, s) => `translate(${x.toFixed(1)}px,${y.toFixed(1)}px) rotate(${r.toFixed(1)}deg) scale(${s.toFixed(3)})`;   // ry is played by the inner flip
   list.forEach((g, k) => {
-    const w = g.w || g.r.width, h = w * 1.4, cx = g.r.left + g.r.width / 2, cy = g.r.top + g.r.height / 2;
+    const w = g.w, h = w * 1.4, cx = g.x, cy = g.y;
     const box = document.createElement("div");
     box.className = "gcard";
     box.style.cssText = `left:${(cx - w / 2).toFixed(1)}px;top:${(cy - h / 2).toFixed(1)}px;width:${w.toFixed(1)}px;height:${h.toFixed(1)}px;--cw:${w.toFixed(1)}px`;
@@ -2413,7 +2420,7 @@ function flyToTray(ghosts) {
 /* A fresh shoe: card backs riffle from the tray into the shoe. */
 function riffle() {
   if (!motionOn()) return;
-  const A = mid($("tray")), B = mid($("shoe")), ov = $("overlay");
+  const at = tableXY(), A = at($("tray")), B = at($("shoe")), ov = $("sweepLayer");
   for (let k = 0; k < 12; k++) {
     const c = document.createElement("div");
     c.className = "card back ghost";
@@ -2559,7 +2566,7 @@ function updateFocus() {
   const s = state, f = $("camFocus");
   const off = () => { focusKey = ""; f.classList.remove("focus"); document.body.classList.remove("focus"); clearInterval(heartT); };
   if (!motionOn()) { if (focusKey) off(); return; }
-  if (renderNow < dealUntil) return;   // the camera stays wide while the table is cleared
+  if (renderNow < dealUntil) { if (focusKey) off(); return; }   // the camera pulls back while the table is cleared
   const t = myTurn(s, me), mi = seatOf(s, me);
   let target = null, key = "", z = 1.12;
   if (t) { target = handEl(s.turn.seat, s.turn.hand); key = `me:${s.round}:${s.turn.seat}:${s.turn.hand}`; }
@@ -3142,9 +3149,9 @@ function render() {
   renderNow = Date.now(); newCount = 0; dealerAt = 0; rendered = new Set(); revealHold = 0; revealRead = 0; holdMs = 0;
   let ghosts = null;
   if (shownRound !== null && state.round > shownRound && fxPrimed && motionOn())
-    ghosts = (() => {   // measured by layout size, so a card caught mid-flip keeps its real size
-      const tb = $("table"), k = tb.getBoundingClientRect().width / tb.offsetWidth || 1;
-      return [...document.querySelectorAll("#dealer .card, #seats .card")].map(el => ({ el: el.cloneNode(true), r: el.getBoundingClientRect(), w: el.offsetWidth * k, dealer: !!el.closest("#dealer") }));
+    ghosts = (() => {   // in table coordinates, so the camera can zoom or shake mid-flight; layout width, so a card caught mid-flip keeps its real size
+      const at = tableXY();
+      return [...document.querySelectorAll("#dealer .card, #seats .card")].map(el => ({ el: el.cloneNode(true), ...at(el), w: el.offsetWidth, dealer: !!el.closest("#dealer") }));
     })();
   shownRound = state.round;
   if (ghosts && ghosts.length) { holdMs = sweepPlan(Math.min(24, ghosts.length)).hold; dealUntil = renderNow + holdMs; }
