@@ -7,7 +7,8 @@ Table de blackjack multijoueur en temps réel : jusqu'à cinq joueurs contre la 
 ## Jouer
 
 - **Multijoueur** : la table partagée tourne comme artifact Claude (la page publiée sur claude.ai). Pour inviter des joueurs, partager l'artifact avec l'accès **Contributeur**. Avec un accès Lecteur, on regarde la partie sans s'asseoir.
-- **Solo (web)** : `index.html` est un site statique, à déployer sur Vercel ou à ouvrir dans n'importe quel navigateur. On joue seul contre la banque, et les jetons sont gardés dans le navigateur (localStorage). Le multijoueur n'existe que dans la version artifact.
+- **Solo (web)** : `index.html` est un site statique, à déployer sur Vercel ou à ouvrir dans n'importe quel navigateur. On joue seul contre la banque, et les jetons sont gardés dans le navigateur (localStorage).
+- **Multi (web)** : bouton « Jouer à plusieurs » (icône deux personnes). On choisit un pseudo, on crée une table et on envoie le lien (`?t=CODE`) ou le code à 5 caractères ; jusqu'à 5 joueurs. Pair-à-pair, sans compte ni serveur : le navigateur de celui qui crée la table l'héberge (il applique les règles et envoie la table aux autres), les invités envoient leurs coups. La mise en relation passe par le service public de PeerJS (avec ses relais TURN), la partie circule ensuite directement entre navigateurs. Les invités reçoivent un sabot mélangé et une carte cachée de remplacement : mêmes probabilités pour le conseiller, rien à lire dans le code de la page. Si l'hôte recharge sa page, la table reprend et les invités se reconnectent ; s'il la ferme, la partie s'arrête. Un joueur sans réponse depuis 10 s passe « hors ligne », et ses jetons solo restent intacts.
 
 ## Règles
 

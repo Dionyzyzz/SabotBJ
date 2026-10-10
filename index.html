@@ -731,6 +731,40 @@ html.store-open{overflow:hidden}
 }
 @media (prefers-reduced-motion:reduce){ .store,.store-scrim,.anim-card.fresh{animation:none} }
 
+/* ---------- Multi on the web: lobby sheet, app-bar button ---------- */
+.adv-ico{display:none}
+#multiBtn .multi-n{position:absolute;right:-5px;bottom:-4px;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:var(--win);color:#10220f;font:800 10.5px/17px var(--font-body);font-style:normal;text-align:center;box-shadow:0 0 0 2px var(--room)}
+#multiBtn .multi-n:empty{display:none}
+#multiBtn.live{border-color:var(--win);color:var(--win)}
+.tag.off{color:var(--ink-faint)}
+.lobby{width:min(520px,calc(100vw - 32px))}
+.lb-body{gap:16px}
+.lb-input{background:var(--brass-ink);border:1px solid var(--rail-hi);color:var(--ink);border-radius:9px;padding:10px 12px;font:inherit;font-size:16px;width:100%;min-width:0}
+.lb-input:focus{border-color:var(--brass);outline:none}
+.lb-main{justify-content:center;padding:13px 16px;font-size:15.5px}
+.lb-or{display:flex;align-items:center;gap:10px;color:var(--ink-faint);font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+.lb-or::before,.lb-or::after{content:"";flex:1;height:1px;background:var(--rail-hi)}
+.lb-join,.lb-link{display:flex;gap:8px}
+.lb-code-in{font-family:var(--font-display);font-weight:700;font-size:20px;letter-spacing:.3em;text-transform:uppercase;text-align:center}
+.lb-link .lb-input{font-size:13.5px;color:var(--ink-dim)}
+.lb-join .btn,.lb-link .btn{flex:none;justify-content:center}
+.lb-err{margin:0;padding:8px 12px;border-radius:9px;background:rgba(241,144,132,.12);border:1px solid rgba(241,144,132,.45);color:var(--lose);font-size:13px}
+.lb-code{font-style:normal;font-weight:700;letter-spacing:.14em;color:var(--ink)}
+.lb-players{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.lb-players li{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;background:rgba(0,0,0,.18)}
+.lb-players b{font-weight:700;color:var(--ink);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lb-players small{margin-left:auto;font-size:12px;color:var(--ink-dim);white-space:nowrap}
+.lb-dot{flex:none;width:9px;height:9px;border-radius:50%;background:var(--win);box-shadow:0 0 8px var(--win)}
+.lb-players li.off .lb-dot{background:var(--ink-faint);box-shadow:none}
+.lb-players li.off b{color:var(--ink-dim)}
+.lb-wait{display:flex;flex-direction:column;align-items:center;gap:14px;padding:18px 0 6px;color:var(--ink-dim)}
+.lb-wait p{margin:0}
+.lb-spin{width:34px;height:34px;border-radius:50%;border:3px solid var(--rail-hi);border-top-color:var(--brass-hi);animation:lb-spin .8s linear infinite}
+@keyframes lb-spin{to{transform:rotate(360deg)}}
+@media (max-width:760px){ .lobby{width:auto} .lb-link{flex-wrap:wrap} .lb-link .lb-input{flex:1 1 100%} .lb-link .btn{flex:1} }
+@media (max-width:400px){ .adv-btn{padding:0;width:34px;height:34px;justify-content:center;gap:0} .adv-btn .adv-txt,.adv-btn kbd{display:none} .adv-ico{display:block} }
+@media (prefers-reduced-motion:reduce){ .lb-spin{animation-duration:2.4s} }
+
 /* ---------- Win animation: ACE, after Valorant's kill banner (ring emblem, kill arc, HUD lines), with the four aces ---------- */
 .ace{position:fixed;inset:0;z-index:27;pointer-events:none;display:none;--teal:#5ef2c2;--line:rgba(222,230,234,.85);--v-red:#ff4655}
 .ace.on{display:block}
@@ -765,9 +799,10 @@ body.no-fx .ace{display:none!important}
       </div>
       <div class="appbar-actions">
         <button class="icon-btn" id="soundBtn" data-act="sound" aria-label="Couper le son" aria-pressed="false"></button>
+        <button class="icon-btn" id="multiBtn" data-act="multi" aria-label="Jouer à plusieurs" hidden><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><circle cx="9" cy="8" r="3.2" fill="currentColor"/><path d="M2.8 19c.5-3.4 3-5.4 6.2-5.4s5.7 2 6.2 5.4z" fill="currentColor"/><circle cx="16.6" cy="9" r="2.6" fill="currentColor" opacity=".7"/><path d="M15.4 13.9c.4-.1.8-.1 1.2-.1 2.6 0 4.6 1.6 5 4.5h-4.7c-.2-1.8-.7-3.2-1.5-4.4z" fill="currentColor" opacity=".7"/></svg><i class="multi-n" id="multiN"></i></button>
         <button class="icon-btn" id="animBtn" data-act="anims" aria-label="Animations de victoire" aria-pressed="false"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M10 2.5l1.9 5.6 5.6 1.9-5.6 1.9L10 17.5l-1.9-5.6L2.5 10l5.6-1.9z M18 14l.9 2.6 2.6.9-2.6.9L18 21l-.9-2.6-2.6-.9 2.6-.9z" fill="currentColor"/></svg><i class="dot" id="animDot" hidden></i></button>
         <button class="icon-btn" id="infoBtn" data-act="info" aria-label="Journal, classement et règles" aria-pressed="false"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><i class="dot" id="infoDot" hidden></i></button>
-        <button class="adv-btn" id="advLaunch" data-act="advisor" aria-pressed="false">Conseils <kbd>C</kbd></button>
+        <button class="adv-btn" id="advLaunch" data-act="advisor" aria-pressed="false"><svg class="adv-ico" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 3a6 6 0 0 0-3.6 10.8c.6.5 1 1.2 1 2V17h5.2v-1.2c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z" fill="currentColor"/><path d="M9.6 19h4.8M10.4 21.2h3.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span class="adv-txt">Conseils </span><kbd>C</kbd></button>
       </div>
     </div>
     <div class="status" id="status" aria-live="polite">Connexion à la table…</div>
@@ -815,6 +850,8 @@ body.no-fx .ace{display:none!important}
 <video id="pvVid" playsinline muted aria-hidden="true"></video>
 <div class="store-scrim" id="storeScrim" hidden></div>
 <section class="store" id="store" role="dialog" aria-modal="true" aria-labelledby="storeTitle" hidden></section>
+<div class="store-scrim" id="lobbyScrim" hidden></div>
+<section class="store lobby" id="lobby" role="dialog" aria-modal="true" aria-labelledby="lobbyTitle" hidden></section>
 <input type="file" id="animFile" accept="video/mp4,video/webm,video/quicktime,video/*" hidden>
 
 <script>
@@ -872,7 +909,7 @@ const newSeat = (uid, b) => ({ uid, chips: b ? b.chips : START, rebuys: b ? b.re
   bet: 0, lastBet: 0, ready: false, hands: [], missed: 0, idle: 0, net: null, seen: null, kick: false });
 const touch = (p, now) => { p.seen = now; p.missed = 0; p.kick = false; };
 /* A seat is idle when its player has done nothing for AFK_MS and is not holding cards in the current donne. */
-const idleDeadline = (s, p) => (p.ready || (s.phase === "playing" && p.hands.length) || p.seen == null) ? null : p.seen + AFK_MS;
+const idleDeadline = (s, p) => (p.ready || (s.phase === "playing" && p.hands.length) || p.seen == null || s.seats.filter(Boolean).length < 2) ? null : p.seen + AFK_MS;   // alone at the table, nobody is kept waiting
 const seatOf = (s, uid) => s.seats.findIndex(p => p && p.uid === uid);
 function log(s, u, m) { s.log.push({ u, m, r: s.round }); if (s.log.length > 16) s.log.splice(0, s.log.length - 16); }
 function unseat(s, i) { const p = s.seats[i]; s.bank[p.uid] = { chips: p.chips, rebuys: p.rebuys, buyin: buyinOf(p) }; s.seats[i] = null; }
@@ -962,6 +999,7 @@ const A = {
     if (seatOf(s, uid) >= 0) return "Vous êtes déjà assis à cette table.";
     if (!(i >= 0 && i < SEATS)) return SKIP;
     if (s.seats[i]) return "Cette place vient d'être prise.";
+    s.seats.forEach(q => { if (q) q.seen = now; });   // a newcomer restarts everyone's 2 min, so whoever waited alone is not shown the door
     s.seats[i] = newSeat(uid, s.bank[uid]); touch(s.seats[i], now); delete s.bank[uid];
     log(s, uid, `s'installe à la place ${i + 1}.`);
   },
@@ -1084,6 +1122,11 @@ async function act(name, arg, opts = {}) {
       if (r) { if (!opts.quiet) toast(r); return; }
       state = s; saveSolo(); render(); return;
     }
+    if (mode === "peer") {
+      const r = multi.host ? multi.hostAct(name, arg) : await multi.request(name, arg);
+      if (r && !opts.quiet) toast(r);
+      return;
+    }
     if (mode !== "db") return;
     let got = false;
     for (let i = 0; i < 10; i++) {
@@ -1111,6 +1154,7 @@ async function act(name, arg, opts = {}) {
 const names = {}; let namesKey = "";
 function nameOf(uid, seatIdx) {
   if (names[uid]) return names[uid];
+  if (mode === "peer" && state && state.nick && state.nick[uid]) return state.nick[uid];
   if (mode === "local") return "Joueur";
   if (seatIdx == null && state) { const i = seatOf(state, uid); if (i >= 0) seatIdx = i; }
   return seatIdx != null && seatIdx >= 0 ? `Joueur ${seatIdx + 1}` : "Un joueur";
@@ -1224,11 +1268,11 @@ function seatHTML(p, i) {
   if (s.phase === "betting") stake = isMe && !p.ready ? draft : (p.ready ? p.bet : 0);
   else stake = p.hands.reduce((a, h) => a + h.bet, 0);
   const el = Math.max(0, renderNow - s.turnAt);
-  const ring = mode === "db" && turn ? `<svg class="tring" viewBox="0 0 64 64" aria-hidden="true"><circle class="tr-bg" cx="32" cy="32" r="30" pathLength="100"/>`
+  const ring = shared() && turn ? `<svg class="tring" viewBox="0 0 64 64" aria-hidden="true"><circle class="tr-bg" cx="32" cy="32" r="30" pathLength="100"/>`
     + `<circle class="tr-fg" cx="32" cy="32" r="30" pathLength="100" style="animation-duration:${TURN_MS}ms,${TURN_MS}ms;animation-delay:-${el}ms,-${el}ms"/></svg>` : "";
   const spot = `<div class="spot${s.phase === "betting" && p.ready ? " is-ready" : ""}">${stake ? chipStack(stake) + `<span class="amt">${fmt(stake)}</span>` : `<span class="spot-n">${i + 1}</span>`}${ring}</div>`;
-  const tag = s.phase === "betting" && p.ready ? `<span class="tag ok">· prêt</span>` : "";
-  const idl = mode === "db" ? idleDeadline(s, p) : null;
+  const tag = mode === "peer" && !isMe && !multi.isOnline(p.uid) ? `<span class="tag off">· hors ligne</span>` : s.phase === "betting" && p.ready ? `<span class="tag ok">· prêt</span>` : "";
+  const idl = shared() ? idleDeadline(s, p) : null;
   const afk = idl != null && idl - renderNow <= WARN_MS ? `<span class="afk">absent · sort dans ${deadline(idl)}</span>` : "";
   const net = s.phase === "betting" && p.net != null && renderNow >= revealEnd ? `<span class="net ${p.net > 0 ? "up" : p.net < 0 ? "down" : ""}">${p.net > 0 ? "+" : ""}${fmt(p.net)}</span>` : "";
   return `<div class="seat${isMe ? " me" : ""}${turn ? " turn" : ""}"><div class="hands">${hands}</div>${spot}`
@@ -1240,21 +1284,23 @@ const deadline = dl => `<span data-deadline="${dl}">${secsLeft(dl)}</span>`;
 const secsLeft = dl => `${Math.max(0, Math.ceil((dl - Date.now()) / 1000))} s`;
 function statusHTML() {
   const s = state;
+  if (mode === "peer" && !multi.host && multi.lost) return `<strong>Connexion perdue</strong> · reconnexion à la table…`;
   if (s.phase === "playing" && s.turn) {
     const p = s.seats[s.turn.seat];
-    const t = mode === "db" ? ` · ${deadline(s.turnAt + TURN_MS)}` : "";
+    const t = shared() ? ` · ${deadline(s.turnAt + TURN_MS)}` : "";
     if (p.uid === me) return `<strong>À vous de jouer</strong>${t}`;
     return `Au tour de <strong>${esc(nameOf(p.uid, s.turn.seat))}</strong>${t}`;
   }
   if (!s.seats.some(Boolean)) return "La table est vide. Choisissez une place pour lancer la partie.";
-  if (s.readyAt && mode === "db") return `<strong>Faites vos jeux</strong> · donne dans ${deadline(s.readyAt + BET_MS)}`;
+  if (s.readyAt && shared()) return `<strong>Faites vos jeux</strong> · donne dans ${deadline(s.readyAt + BET_MS)}`;
   return `<strong>Faites vos jeux</strong> · les cartes partent quand tous les joueurs assis ont misé.`;
 }
-function canPlay() { return (mode === "db" || mode === "local") && !readOnly && canWrite && !!me; }
+function canPlay() { return (mode === "db" || mode === "local" || mode === "peer") && !readOnly && canWrite && !!me; }
+function shared() { return mode === "db" || mode === "peer"; }   // a table with other players: turn timers and absences
 function dockHTML() {
   const core = dockCore();
   const p = state.seats[seatOf(state, me)];
-  const idl = p && mode === "db" ? idleDeadline(state, p) : null;
+  const idl = p && shared() ? idleDeadline(state, p) : null;
   if (idl == null || idl - renderNow > WARN_MS) return core;
   return `<div class="dock-stack"><div class="dock-warn"><span>Sans action de votre part, vous quittez la table dans <b>${deadline(idl)}</b>.</span><button class="btn sm primary" data-act="here">Je reste</button></div>${core}</div>`;
 }
@@ -1274,7 +1320,7 @@ function dockCore() {
       const rec = hintsOn ? adviceFor(p, h).move : null, R = m => rec === m ? " rec" : "";
       const hold = Math.max(revealHold, dealUntil) > renderNow, off = hold ? " disabled" : "";
       return `<div class="dock-row"><div class="dock-info"><span class="lbl">Votre main${p.hands.length > 1 ? ` ${s.turn.hand + 1}/${p.hands.length}` : ""}</span>`
-        + `<span class="big">${hold ? "…" : v.soft && v.total < 21 ? `${v.total - 10}/${v.total}` : v.total}</span><span class="lbl">contre ${up === 11 ? "As" : up}</span>${mode === "db" ? `<span class="lbl timer">· ${deadline(s.turnAt + TURN_MS)}</span>` : ""}</div>`
+        + `<span class="big">${hold ? "…" : v.soft && v.total < 21 ? `${v.total - 10}/${v.total}` : v.total}</span><span class="lbl">contre ${up === 11 ? "As" : up}</span>${shared() ? `<span class="lbl timer">· ${deadline(s.turnAt + TURN_MS)}</span>` : ""}</div>`
         + `<div class="actions turn"><button class="btn primary${R("hit")}" data-act="hit"${off}>Tirer <kbd>T</kbd></button>`
         + `<button class="btn${R("stand")}" data-act="stand"${off}>Rester <kbd>R</kbd></button>`
         + `<button class="btn${R("double")}" data-act="double"${canD && !hold ? "" : " disabled"}>Doubler <kbd>D</kbd></button>`
@@ -1318,7 +1364,7 @@ function boardHTML() {
 }
 function metaHTML() {
   const left = Math.floor(state.shoe.length / 2), total = DECKS * 52;
-  return `<span>Donne n° ${state.round}</span><span class="shoe" title="Le sabot est remélangé sous la carte rouge (25 %)">Sabot ${left}/${total}`
+  return `${mode === "peer" ? `<span>Table ${esc(multi.code)}</span>` : ""}<span>Donne n° ${state.round}</span><span class="shoe" title="Le sabot est remélangé sous la carte rouge (25 %)">Sabot ${left}/${total}`
     + `<span class="shoe-bar"><i style="width:${(left / total * 100).toFixed(1)}%"></i><u></u></span></span>`;
 }
 /* ---------- Advisor: basic strategy (6 jeux, banque reste sur 17, double après séparation, sans abandon) ---------- */
@@ -3181,7 +3227,8 @@ function render() {
   if (infoSeen === null || (infoOpen && infoTab === "log")) infoSeen = lastLog;
   $("infoDot").hidden = !lastLog || lastLog === infoSeen;
   if (infoOpen) put("info", infoHTML());
-  const lb = $("advLaunch"); lb.setAttribute("aria-pressed", String(advOpen)); lb.firstChild.textContent = advOpen ? "Masquer " : "Conseils ";
+  const lb = $("advLaunch"); lb.setAttribute("aria-pressed", String(advOpen)); lb.querySelector(".adv-txt").textContent = advOpen ? "Masquer " : "Conseils "; lb.setAttribute("aria-label", advOpen ? "Masquer les conseils" : "Conseils");
+  lobby.button();
   $("seats").classList.toggle("seated", seatOf(state, me) >= 0);
   if (advOpen) put("advisor", advisorHTML());
   placeHint();
@@ -3213,6 +3260,7 @@ document.addEventListener("click", e => {
   if (a === "level") { toast(`Niveau ${xp.lvl} · ${xp.xp} / ${xpNeed(xp.lvl)} XP. Chaque main en rapporte, les victoires et les blackjacks davantage.`); pop($("lvl"), 1.2, 300); return; }
   if (a === "advisor") return setAdvisor(!advOpen);
   if (a === "info") return setInfo(!infoOpen);
+  if (a === "multi") { if (infoOpen) setInfo(false); if (advOpen && phoneUI()) setAdvisor(false); lobby.open(); return; }
   if (a === "anims") { if (infoOpen) setInfo(false); if (advOpen && phoneUI()) setAdvisor(false); store.open(); return; }
   if (a === "infotab") { infoTab = arg; render(); return; }
   if (a === "closesheets") { infoOpen = false; return setAdvisor(false); }
@@ -3230,6 +3278,7 @@ document.addEventListener("click", e => {
 });
 document.addEventListener("keydown", e => {
   if (store.isOpen) { if (e.key === "Escape") { e.preventDefault(); store.close(); } return; }
+  if (lobby.isOpen) { if (e.key === "Escape") { e.preventDefault(); lobby.close(); } return; }
   if (!state || e.metaKey || e.ctrlKey || e.altKey || e.repeat) return;
   if (e.target.closest && e.target.closest("input,textarea,select")) return;
   const k = e.key.toLowerCase();
@@ -3251,14 +3300,15 @@ document.addEventListener("keydown", e => {
 let lastAuto = 0, warnSig = "", lastTickSec = 0;
 setInterval(() => {
   document.querySelectorAll("[data-deadline]").forEach(el => { el.textContent = secsLeft(+el.dataset.deadline); });
-  const mt = state && mode === "db" && myTurn(state, me);
+  const mt = state && shared() && myTurn(state, me);
   const left = mt ? Math.ceil((state.turnAt + TURN_MS - Date.now()) / 1000) : 99;
   $("dock").classList.toggle("urgent", left <= 5 && left > 0);
   if (left <= 5 && left > 0 && left !== lastTickSec) { lastTickSec = left; sfx.tick(left <= 3); if (left <= 3) buzz(10); }
-  if (mode !== "db" || !state) return;
+  if (!shared() || !state) return;
   const s = state, now = Date.now();
   const sig = s.seats.map(p => { const dl = p && idleDeadline(s, p); return dl != null && dl - now <= WARN_MS ? 1 : 0; }).join("");
   if (sig !== warnSig) { warnSig = sig; render(); }
+  if (mode === "peer" && !multi.host) return;   // on the web the host runs the clock
   if (busy || readOnly || !canWrite || !me || now < lastAuto) return;
   let job = null;
   if (s.phase === "betting" && s.readyAt && now - s.readyAt >= BET_MS && s.seats.some(p => p && p.ready)) job = "autoDeal";
@@ -3268,6 +3318,344 @@ setInterval(() => {
   lastAuto = now + 3000;
   setTimeout(() => act(job, null, { quiet: true }), Math.random() * 1200);
 }, 1000);
+
+/* ---------- Multi on the web: a peer-to-peer table hosted by the browser that creates it ---------- */
+/* The host runs the rules and sends the table to everyone; guests send their moves and show what comes back.
+   PeerJS only finds the players for each other (its public broker); the game itself travels between browsers. */
+const PEER_JS = "https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js";
+const GUEST_ACTS = new Set(["sit", "leave", "ready", "unready", "rebuy", "hit", "stand", "double", "split", "here"]);
+const CODE_ABC = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+const cleanNick = v => String(v || "").replace(/[\u0000-\u001f<>]/g, "").replace(/\s+/g, " ").trim().slice(0, 16);
+const cleanCode = v => String(v || "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 5);
+const multi = (() => {
+  const ls = (k, v) => { try { if (v === undefined) return localStorage.getItem(k); if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) {} return null; };
+  const rid = () => "p" + Math.random().toString(36).slice(2, 10);
+  let pid = (() => { try { return sessionStorage.getItem("sabot.pid.tab") || ls("sabot.pid") || (ls("sabot.pid", rid()), ls("sabot.pid")) || rid(); } catch (e) { return rid(); } })();
+  let peer = null, hostConn = null, code = "", host = false, lost = false, phase = "off", err = "", tries = 0, seq = 0, closing = false, retryT = 0, resume = null, lastPong = 0;
+  const ss = (k, v) => { try { if (v === undefined) return sessionStorage.getItem(k); if (v === null) sessionStorage.removeItem(k); else sessionStorage.setItem(k, v); } catch (e) {} return null; };
+  const guests = new Map(), nicks = {}, pending = new Map();
+  let online = new Set();
+  const peerId = c => "sabotbj-" + c.toLowerCase();
+  let libP = null;
+  function lib() {
+    if (window.Peer) return Promise.resolve(window.Peer);
+    return libP || (libP = new Promise((res, rej) => {
+      const sc = document.createElement("script"); sc.src = PEER_JS; sc.async = true;
+      sc.onload = () => (window.Peer ? res(window.Peer) : rej(new Error("peerjs")));
+      sc.onerror = () => { libP = null; rej(new Error("peerjs")); };
+      document.head.appendChild(sc);
+    }));
+  }
+  const nick = () => cleanNick(ls("sabot.nick")) || "Joueur";
+  const inviteURL = () => location.origin + location.pathname + "?t=" + code;
+  function setURL(c) { try { const u = new URL(location.href); if (c) u.searchParams.set("t", c); else u.searchParams.delete("t"); history.replaceState(null, "", u); } catch (e) {} }
+  function changed() { lobby.render(); render(); }
+  /* A new table on screen: no fireworks for what was already there, no cards flying in from the last one. */
+  function enter(s) {
+    fxPrimed = false; primed = false; shownRound = null; born.clear();
+    mode = "peer"; me = pid; state = s; isAdmin = host; canWrite = true; readOnly = false; soloNote = "";
+    render();
+  }
+
+  /* --- host --- */
+  const shuffleShoe = sh => { const a = sh.match(/../g) || []; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  function guestView(s) {   // guests get the shoe's cards in random order and a stand-in for the hole card: same odds, nothing to peek at
+    const v = clone(s), d = v.dealer;
+    let cards = shuffleShoe(v.shoe);
+    if (d.hidden && d.cards[1]) { cards.push(d.cards[1]); cards = shuffleShoe(cards.join("")); d.cards[1] = cards.pop(); }
+    v.shoe = cards.join("");
+    return v;
+  }
+  function broadcast() {
+    if (!host || !state) return;
+    const msg = { t: "state", s: guestView(state), online: [pid, ...guests.keys()] };
+    for (const c of guests.values()) if (c.open) try { c.send(msg); } catch (e) {}
+    online = new Set(msg.online);
+  }
+  function saveHost() { ls("sabot.host", JSON.stringify({ code, at: Date.now(), state })); }
+  function commit(s) {
+    s.nick = Object.assign(s.nick || {}, nicks); s.rev = (s.rev || 0) + 1;
+    state = s; saveHost(); broadcast(); changed();
+  }
+  function autoSit(s, who) {   // newcomers take the free seat nearest the middle
+    if (seatOf(s, who) >= 0) return;
+    const i = [2, 1, 3, 0, 4].find(k => !s.seats[k]);
+    if (i != null) A.sit(s, who, Date.now(), i);
+  }
+  function hostApply(name, who, arg) {
+    const s = clone(state), r = A[name](s, who, Date.now(), arg);
+    if (r === SKIP) return null;
+    if (r) return r;
+    commit(s); return null;
+  }
+  function onGuest(c) {
+    c.on("data", d => {
+      if (!d || typeof d !== "object") return;
+      if (d.t === "hello") {
+        const who = typeof d.pid === "string" && /^[a-z0-9]{4,24}$/i.test(d.pid) ? d.pid : null;
+        if (!who) return;
+        if (who === pid) { c.send({ t: "dup" }); return; }   // same browser as the host: that tab becomes its own player
+        const old = guests.get(who);
+        if (old && old !== c) { try { old.send({ t: "kicked" }); old.close(); } catch (e) {} }
+        c.pid = who; c.seen = Date.now(); guests.set(who, c);
+        nicks[who] = cleanNick(d.nick) || "Joueur";
+        const s = clone(state); s.nick = Object.assign(s.nick || {}, nicks); autoSit(s, who);
+        commit(s);
+        return;
+      }
+      if (c.pid) c.seen = Date.now();
+      if (d.t === "ping") { try { c.send({ t: "pong" }); } catch (e) {} return; }
+      if (d.t === "bye") { if (c.pid && guests.get(c.pid) === c) { guests.delete(c.pid); broadcast(); changed(); } try { c.close(); } catch (e) {} return; }
+      if (d.t === "act" && c.pid && guests.get(c.pid) === c) {
+        const name = String(d.name), arg = typeof d.arg === "number" ? d.arg : null;
+        const res = GUEST_ACTS.has(name) ? hostApply(name, c.pid, arg) : "Action refusée.";
+        try { c.send({ t: "res", id: d.id, err: res }); } catch (e) {}
+      }
+    });
+    c.on("close", () => { if (c.pid && guests.get(c.pid) === c) { guests.delete(c.pid); broadcast(); changed(); } });
+  }
+  async function startHost(c, saved) {
+    phase = "connecting"; err = ""; lobby.render();
+    let Peer;
+    try { Peer = await lib(); } catch (e) { return fail("Le module multijoueur ne s'est pas chargé. Vérifiez la connexion."); }
+    closing = false; host = true; code = c || Array.from({ length: 5 }, () => CODE_ABC[Math.floor(Math.random() * CODE_ABC.length)]).join("");
+    nicks[pid] = nick(); ss("sabot.hosting", code); resume = null;
+    const s = saved && saved.seats ? saved : initState();
+    s.nick = Object.assign(s.nick || {}, nicks); autoSit(s, pid);
+    enter(s); saveHost(); setURL(code);
+    const open = () => {
+      peer = new Peer(peerId(code), { debug: 0 });
+      peer.on("open", () => { tries = 0; phase = "on"; lost = false; changed(); });
+      peer.on("connection", onGuest);
+      peer.on("disconnected", () => { if (!closing && peer && !peer.destroyed) peer.reconnect(); });   // the broker only; tables already joined keep playing
+      peer.on("error", e => {
+        if (closing) return;
+        if (e.type === "unavailable-id" && tries++ < 8) { peer.destroy(); setTimeout(open, 2000); return; }   // the same table just reloaded: its old id is being released
+        if (e.type === "unavailable-id") return fail("Ce code de table est déjà utilisé. Créez une nouvelle table.");
+        if (["network", "server-error", "socket-error", "socket-closed"].includes(e.type)) { lost = true; changed(); }
+      });
+    };
+    open();
+  }
+
+  /* --- guest --- */
+  function connect() {
+    if (closing || !peer) return;
+    hostConn = peer.connect(peerId(code), { serialization: "json", reliable: true });
+    const conn = hostConn;
+    const slow = setTimeout(() => { if (!conn.open && conn === hostConn) { try { conn.close(); } catch (e) {} lostHost(); } }, 7000);   // a table that went away can leave the call unanswered
+    conn.on("open", () => { clearTimeout(slow); tries = 0; lastPong = Date.now(); conn.send({ t: "hello", pid, nick: nick() }); });
+    conn.on("data", d => {
+      if (!d || typeof d !== "object" || conn !== hostConn) return;
+      lastPong = Date.now();
+      if (d.t === "pong") return;
+      if (d.t === "state" && d.s && Array.isArray(d.s.seats)) {
+        online = new Set(Array.isArray(d.online) ? d.online : []);
+        const first = mode !== "peer"; lost = false; phase = "on";
+        if (first) { enter(d.s); setURL(code); lobby.close(); toast(`Vous êtes à la table ${code}.`); } else { state = d.s; }   // a reload comes back to the table
+        changed();
+      } else if (d.t === "res") { const r = pending.get(d.id); if (r) { pending.delete(d.id); r(d.err || null); } }
+      else if (d.t === "dup") { try { sessionStorage.setItem("sabot.pid.tab", pid = rid()); } catch (e) { pid = rid(); } conn.send({ t: "hello", pid, nick: nick() }); }
+      else if (d.t === "kicked") { fail("Cette table est ouverte dans un autre onglet."); }
+      else if (d.t === "bye") { fail("L'hôte a fermé la table."); }
+    });
+    conn.on("close", () => { if (conn === hostConn) lostHost(); });
+  }
+  function lostHost() {
+    if (closing || retryT) return;
+    const again = ms => { retryT = setTimeout(() => { retryT = 0; connect(); }, ms); };
+    if (phase !== "on" && mode !== "peer") {
+      if (tries++ < 2) { again(1500); return; }
+      if (resume) { const st = resume, c = code; teardown(); startHost(c, st); return; }   // our own table, and nobody holds it: take it back
+      return fail("Table introuvable. Vérifiez le code ou demandez un nouveau lien.");
+    }
+    lost = true; changed();
+    if (tries++ < 8) again(Math.min(6000, 1500 * tries));   // the host may just be reloading the page
+    else fail("La table ne répond plus. L'hôte a peut-être fermé la page.");
+  }
+  async function startGuest(c) {
+    phase = "connecting"; err = ""; lobby.render();
+    closing = false;
+    let Peer;
+    try { Peer = await lib(); } catch (e) { return fail("Le module multijoueur ne s'est pas chargé. Vérifiez la connexion."); }
+    closing = false; host = false; code = c; tries = 0;
+    peer = new Peer({ debug: 0 });
+    peer.on("open", connect);
+    peer.on("disconnected", () => { if (!closing && peer && !peer.destroyed) peer.reconnect(); });
+    peer.on("error", e => {
+      if (closing) return;
+      if (e.type === "peer-unavailable") lostHost();
+      else if (["network", "server-error", "socket-error", "socket-closed", "browser-incompatible"].includes(e.type) && mode !== "peer") fail(e.type === "browser-incompatible" ? "Ce navigateur ne permet pas le jeu à plusieurs." : "Connexion impossible au service de mise en relation.");
+    });
+  }
+
+  /* --- both --- */
+  function teardown() {
+    closing = true; clearTimeout(retryT); retryT = 0;
+    for (const r of pending.values()) r("La connexion à la table est fermée.");
+    pending.clear();
+    if (host) { for (const c of guests.values()) try { c.send({ t: "bye" }); } catch (e) {} ls("sabot.host", null); ss("sabot.hosting", null); }
+    guests.clear(); online = new Set();
+    const p = peer; peer = null; hostConn = null;
+    if (p) setTimeout(() => { try { p.destroy(); } catch (e) {} }, 150);   // lets the goodbye leave first
+    host = false; lost = false; code = ""; setURL("");
+  }
+  function fail(msg) {
+    const wasPeer = mode === "peer";
+    teardown(); phase = "off"; err = msg;
+    if (wasPeer) { startLocal(SOLO_NOTE); toast(msg); }
+    lobby.render(true);
+  }
+  async function leave() {
+    if (!host && hostConn && hostConn.open && state && seatOf(state, me) >= 0) await Promise.race([request("leave"), sleep(800)]);   // free the seat on the way out
+    teardown(); phase = "off"; err = "";
+    startLocal(SOLO_NOTE); lobby.render();
+  }
+  function request(name, arg) {
+    return new Promise(res => {
+      if (!hostConn || !hostConn.open) { res("Connexion à la table perdue. Reconnexion en cours…"); return; }
+      const id = ++seq; pending.set(id, res);
+      try { hostConn.send({ t: "act", id, name, arg }); } catch (e) { pending.delete(id); res("L'action n'a pas atteint la table."); return; }
+      setTimeout(() => { if (pending.has(id)) { pending.delete(id); res("La table ne répond pas. Réessayez dans un instant."); } }, 6000);
+    });
+  }
+  /* Heartbeat: a closed tab does not always close its connection, so both sides listen for silence (10 s). */
+  setInterval(() => {
+    if (mode !== "peer" || closing) return;
+    const now = Date.now();
+    if (host) {
+      let gone = false;
+      for (const [who, c] of guests) if (now - (c.seen || 0) > 10000) { guests.delete(who); gone = true; try { c.close(); } catch (e) {} }
+      if (gone) { broadcast(); changed(); }
+    } else if (hostConn && hostConn.open) {
+      if (now - lastPong > 10000) { const c = hostConn; hostConn = null; try { c.close(); } catch (e) {} lostHost(); }
+      else try { hostConn.send({ t: "ping" }); } catch (e) {}
+    }
+  }, 3000);
+  window.addEventListener("pagehide", () => { if (!host && hostConn && hostConn.open) try { hostConn.send({ t: "bye" }); } catch (e) {} });
+  /* A link with ?t=CODE joins that table (or takes it back, for the browser that created it). */
+  function boot() {
+    let c = "";
+    try { c = cleanCode(new URL(location.href).searchParams.get("t")); } catch (e) {}
+    if (c.length !== 5) return;
+    let saved = null;
+    try { saved = JSON.parse(ls("sabot.host") || "null"); } catch (e) {}
+    const mine = saved && saved.code === c && Date.now() - saved.at < 12 * 3600e3;
+    if (mine && ss("sabot.hosting") === c) { startHost(c, saved.state); return; }   // the host reloading its own tab
+    resume = mine ? saved.state : null;   // another tab, or a reopened link: join first, take the table back only if nobody holds it
+    if (cleanNick(ls("sabot.nick")) || mine) startGuest(c);
+    else lobby.open({ code: c });
+  }
+  return {
+    get host() { return host; }, get code() { return code; }, get lost() { return lost; }, get phase() { return phase; }, get err() { return err; },
+    get pid() { return pid; }, inviteURL, isOnline: u => online.has(u), players: () => [...online],
+    create: () => startHost(), join: c => startGuest(c), leave, request, boot,
+    hostAct: (name, arg) => hostApply(name, me, arg),
+    clearErr() { err = ""; },
+  };
+})();
+
+/* ---------- "Jouer à plusieurs": create a table, invite with a link, join with a code ---------- */
+const lobby = (() => {
+  const el = $("lobby"), scrim = $("lobbyScrim");
+  let isOpen = false, from = null, prefill = "";
+  const ls = k => { try { return localStorage.getItem(k) || ""; } catch (e) { return ""; } };
+  function homeHTML() {
+    return `<header class="store-head"><div><p class="store-kick">Multijoueur</p><h2 id="lobbyTitle">Jouer à plusieurs</h2></div><button class="adv-x" data-lb="close" aria-label="Fermer">×</button></header>`
+      + `<div class="store-body lb-body">`
+      + `<label class="imp-field"><span>Votre pseudo</span><input id="lbNick" class="lb-input" maxlength="16" autocomplete="nickname" spellcheck="false" value="${esc(cleanNick(ls("sabot.nick")))}" placeholder="Ex. : Sam"></label>`
+      + `<button class="btn primary lb-main" data-lb="host">Créer une table</button>`
+      + `<div class="lb-or"><span>ou rejoindre avec un code</span></div>`
+      + `<div class="lb-join"><input id="lbCode" class="lb-input lb-code-in" maxlength="5" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ABCDE" aria-label="Code de la table" value="${esc(prefill)}"><button class="btn" data-lb="join">Rejoindre</button></div>`
+      + `<p class="lb-err" id="lbErr"${multi.err ? "" : " hidden"}>${esc(multi.err)}</p>`
+      + `<p class="store-note">Jusqu'à 5 joueurs. La table vit dans le navigateur de celui qui la crée : s'il ferme la page, la partie s'arrête.</p></div>`;
+  }
+  function waitHTML() {
+    return `<header class="store-head"><div><p class="store-kick">Multijoueur</p><h2 id="lobbyTitle">Connexion…</h2></div><button class="adv-x" data-lb="close" aria-label="Fermer">×</button></header>`
+      + `<div class="store-body lb-body"><div class="lb-wait"><i class="lb-spin" aria-hidden="true"></i><p>${multi.host ? "Ouverture de la table" : "Recherche de la table"}…</p></div>`
+      + `<button class="btn ghost" data-lb="leave">Annuler</button></div>`;
+  }
+  function tableHTML() {
+    const s = state, ids = new Set([...multi.players(), ...s.seats.filter(Boolean).map(p => p.uid)]);
+    const rows = [...ids].map(u => {
+      const i = seatOf(s, u), on = multi.isOnline(u) || (multi.host && u === me);
+      const tags = [u === me ? "vous" : "", multi.host ? (u === me ? "hôte" : "") : "", i >= 0 ? `place ${i + 1}` : "spectateur", on ? "" : "hors ligne"].filter(Boolean).join(" · ");
+      return `<li class="${on ? "" : "off"}"><i class="lb-dot" aria-hidden="true"></i><b>${esc(nameOf(u, i))}</b><small>${tags}</small></li>`;
+    }).join("");
+    const share = navigator.share ? `<button class="btn" data-lb="share">Partager</button>` : "";
+    return `<header class="store-head"><div><p class="store-kick">${multi.host ? "Vous hébergez" : "Table multijoueur"}</p><h2 id="lobbyTitle">Table <span class="lb-code">${esc(multi.code)}</span></h2></div><button class="adv-x" data-lb="close" aria-label="Fermer">×</button></header>`
+      + `<div class="store-body lb-body">`
+      + (multi.lost ? `<p class="lb-err">${multi.host ? "Le service de mise en relation est injoignable : les joueurs déjà là continuent, les nouveaux ne peuvent pas entrer." : "Connexion perdue, reconnexion…"}</p>` : "")
+      + `<div class="imp-field"><span>Lien d'invitation</span><div class="lb-link"><input id="lbURL" class="lb-input" readonly value="${esc(multi.inviteURL())}" aria-label="Lien d'invitation"><button class="btn primary" data-lb="copy">Copier</button>${share}</div></div>`
+      + `<div class="imp-field"><span>Joueurs · ${ids.size}</span><ul class="lb-players">${rows}</ul></div>`
+      + `<button class="btn ghost danger" data-lb="leave">${multi.host ? "Fermer la table" : "Quitter la table"}</button>`
+      + `<p class="store-note">${multi.host ? "Fermer la table déconnecte les autres joueurs. Vos jetons solo restent intacts." : "En quittant, vous revenez à votre partie solo."}</p></div>`;
+  }
+  function button() {
+    const b = $("multiBtn");
+    b.hidden = mode === "db" || mode === "loading" || !!(window.claude && window.claude.use);   // on claude.ai the shared table already is the multi
+    b.classList.toggle("live", mode === "peer");
+    b.setAttribute("aria-pressed", String(isOpen));
+    b.setAttribute("aria-label", mode === "peer" ? `Table ${multi.code}, ${multi.players().length} joueur(s) connecté(s)` : "Jouer à plusieurs");
+    $("multiN").textContent = mode === "peer" ? String(Math.max(1, multi.players().length)) : "";
+  }
+  function render(focusErr) {
+    button();
+    if (!isOpen) { if (focusErr && multi.err) open(); return; }
+    const view = mode === "peer" ? "table" : multi.phase === "connecting" ? "wait" : "home";
+    const focusId = document.activeElement && document.activeElement.id;
+    el.innerHTML = view === "table" ? tableHTML() : view === "wait" ? waitHTML() : homeHTML();
+    el.dataset.view = view;
+    const f = focusId && $(focusId); if (f) f.focus({ preventScroll: true });
+  }
+  function open(o = {}) {
+    if (o.code) prefill = o.code;
+    if (!isOpen) { isOpen = true; from = document.activeElement; el.hidden = false; scrim.hidden = false; document.documentElement.classList.add("store-open"); sfx.whoosh(); }
+    render();
+    const t = mode === "peer" ? el.querySelector('[data-lb="copy"]') : !cleanNick(ls("sabot.nick")) ? $("lbNick") : prefill && $("lbCode") ? el.querySelector('[data-lb="join"]') : el.querySelector('[data-lb="host"]');
+    if (t) t.focus({ preventScroll: true });
+  }
+  function close() {
+    if (!isOpen) return;
+    isOpen = false; el.hidden = true; scrim.hidden = true; el.innerHTML = ""; button();
+    if (!$("store") || $("store").hidden) document.documentElement.classList.remove("store-open");
+    if (from && from.focus && document.contains(from)) try { from.focus({ preventScroll: true }); } catch (e) {}
+  }
+  function takeNick() {
+    const n = cleanNick($("lbNick") && $("lbNick").value);
+    if (!n) { const e = $("lbErr"); e.textContent = "Choisissez un pseudo."; e.hidden = false; $("lbNick").focus(); return ""; }
+    try { localStorage.setItem("sabot.nick", n); } catch (e) {}
+    return n;
+  }
+  el.addEventListener("click", e => {
+    const b = e.target.closest("[data-lb]"); if (!b) return;
+    const a = b.dataset.lb;
+    sfx.tap();
+    if (a === "close") close();
+    else if (a === "host") { if (takeNick()) { multi.clearErr(); multi.create(); } }
+    else if (a === "join") {
+      if (!takeNick()) return;
+      const c = cleanCode($("lbCode").value);
+      if (c.length !== 5) { const er = $("lbErr"); er.textContent = "Le code a 5 caractères (lettres et chiffres)."; er.hidden = false; $("lbCode").focus(); return; }
+      prefill = c; multi.clearErr(); multi.join(c);
+    }
+    else if (a === "leave") multi.leave();
+    else if (a === "copy") {
+      const url = multi.inviteURL(), done = () => { toast("Lien copié. Envoyez-le à vos amis."); b.textContent = "Copié"; setTimeout(() => { b.textContent = "Copier"; }, 1800); };
+      const pick = () => { const i = $("lbURL"); i.focus(); i.select(); try { document.execCommand("copy"); done(); } catch (er) { toast("Sélectionnez le lien pour le copier."); } };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, pick); else pick();
+    }
+    else if (a === "share") navigator.share({ title: "Le Sabot · Blackjack", text: `Viens jouer au blackjack avec moi : table ${multi.code}`, url: multi.inviteURL() }).catch(() => {});
+  });
+  el.addEventListener("input", e => { if (e.target.id === "lbCode") { const v = cleanCode(e.target.value); if (v !== e.target.value) e.target.value = v; } });
+  el.addEventListener("keydown", e => {
+    if (e.key !== "Enter") return;
+    if (e.target.id === "lbCode") { e.preventDefault(); el.querySelector('[data-lb="join"]').click(); }
+    else if (e.target.id === "lbNick") { e.preventDefault(); el.querySelector(cleanCode($("lbCode").value).length === 5 ? '[data-lb="join"]' : '[data-lb="host"]').click(); }
+  });
+  scrim.addEventListener("click", close);
+  return { open, close, render, button, get isOpen() { return isOpen; } };
+})();
 
 /* ---------- Boot ---------- */
 /* Solo games keep their chips on this device only. */
@@ -3280,8 +3668,10 @@ function loadSolo() {
   return null;
 }
 function saveSolo() { try { localStorage.setItem(SOLO_KEY, JSON.stringify(state)); } catch (e) {} }
+const SOLO_NOTE = "Partie solo contre la banque. Vos jetons sont gardés sur cet appareil.";
 function startLocal(note) {
-  mode = "local"; me = "solo";
+  if (mode === "peer") { fxPrimed = false; primed = false; shownRound = null; born.clear(); }   // back from a multi table
+  mode = "local"; me = "solo"; isAdmin = false; canWrite = true; readOnly = false;
   state = loadSolo();
   if (!state) { state = initState(); state.seats[2] = newSeat(me); }
   names[me] = "";
@@ -3290,7 +3680,7 @@ function startLocal(note) {
 }
 async function boot() {
   const C = window.claude;
-  if (!C || typeof C.use !== "function") return startLocal("Partie solo contre la banque. Vos jetons sont gardés sur cet appareil.");
+  if (!C || typeof C.use !== "function") { startLocal(SOLO_NOTE); multi.boot(); return; }
   let dbc = null, uc = null;
   try { [dbc, uc] = await Promise.all([C.use("db"), C.use("user")]); } catch (e) { /* fall through */ }
   if (!dbc) return startLocal("Partie solo : la table partagée n'est pas accessible depuis cette vue (connexion requise).");
